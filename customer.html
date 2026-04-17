@@ -346,11 +346,7 @@ function sendSupport(){const s=document.getElementById('support-subject').value,
             ['loginEmail','loginPassword'].forEach(function(id) {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        // find and click the login/signin button
-                        const btn = document.querySelector('button[onclick*="login"], button[onclick*="Login"], button[onclick*="signin"], button[onclick*="signIn"]');
-                        if (btn) btn.click();
-                    }
+                    if (e.key === 'Enter') doLogin();
                 });
             });
         });
