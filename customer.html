@@ -1,350 +1,1135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrePae - Customer Portal</title>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI',sans-serif; background:#0d0d0d; color:#fff; }
-.logo-wrap { display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
-.logo-text { font-size:1.5rem; font-weight:800; color:#fff; }
-#login-screen,#register-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0d0d0d; }
-#register-screen { display:none; }
-.auth-box { background:#161616; border:1px solid #2a2a2a; border-radius:16px; padding:2.5rem; width:100%; max-width:420px; }
-.auth-logo-wrap { display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:0.4rem; }
-.auth-logo-text { font-size:2rem; font-weight:800; color:#fff; }
-.auth-sub { text-align:center; color:#6b7280; font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:2rem; }
-.form-group { margin-bottom:1rem; }
-label { display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:#d1d5db; }
-input,select,textarea { width:100%; padding:0.7rem 1rem; background:#1f1f1f; border:1.5px solid #333; border-radius:8px; font-size:0.95rem; color:#fff; }
-input::placeholder { color:#4b5563; }
-input:focus,select:focus,textarea:focus { outline:none; border-color:#3b82f6; }
-select option { background:#1f1f1f; }
-.btn { padding:0.75rem 1.5rem; border-radius:8px; border:none; cursor:pointer; font-size:0.95rem; font-weight:600; width:100%; margin-top:0.5rem; background:#3b82f6; color:white; }
-.btn:hover { background:#2563eb; }
-.auth-footer { text-align:center; margin-top:1.2rem; font-size:0.85rem; color:#6b7280; }
-.auth-footer a { color:#3b82f6; text-decoration:none; cursor:pointer; }
-.alert { padding:0.8rem 1rem; border-radius:8px; margin-bottom:1rem; font-size:0.88rem; display:none; }
-.alert-error { background:#1f0a0a; border:1px solid #7f1d1d; color:#fca5a5; }
-.alert-success { background:#052e16; border:1px solid #14532d; color:#86efac; }
-#app-screen { display:none; min-height:100vh; background:#0d0d0d; }
-nav { background:#161616; border-bottom:1px solid #2a2a2a; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; }
-.nav-right { display:flex; align-items:center; gap:1rem; }
-.nav-user { color:#6b7280; font-size:0.9rem; }
-.nav-logout { color:#ef4444; background:none; border:1px solid #ef4444; padding:0.4rem 1rem; border-radius:6px; cursor:pointer; font-size:0.85rem; }
-.nav-logout:hover { background:#ef4444; color:white; }
-.tabs { background:#161616; border-bottom:1px solid #2a2a2a; display:flex; padding:0 2rem; overflow-x:auto; }
-.tab { padding:1rem 1.4rem; cursor:pointer; font-weight:500; color:#6b7280; border-bottom:3px solid transparent; margin-bottom:-1px; white-space:nowrap; font-size:0.9rem; }
-.tab.active { color:#3b82f6; border-bottom-color:#3b82f6; }
-.tab:hover { color:#3b82f6; }
-.container { max-width:1100px; margin:2rem auto; padding:0 1.5rem; }
-.page { display:none; }
-.page.active { display:block; }
-
-/* STAT CARDS - always visible */
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.2rem; margin-bottom:2rem; }
-.stat-card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; }
-.stat-label { font-size:0.75rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem; }
-.stat-value { font-size:1.8rem; font-weight:700; color:#fff; }
-.stat-sub { font-size:0.8rem; color:#4b5563; margin-top:0.3rem; }
-
-.section-title { font-size:1.1rem; font-weight:600; margin-bottom:1rem; color:#e5e7eb; }
-.card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
-.goal-card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; margin-bottom:1rem; }
-.goal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; }
-.goal-name { font-weight:600; color:#f9fafb; }
-.goal-merchant { font-size:0.8rem; color:#6b7280; margin-top:0.2rem; }
-.goal-current { font-size:1.4rem; font-weight:700; color:#10b981; }
-.goal-target { font-size:0.8rem; color:#4b5563; }
-.progress-bar { background:#1f2937; border-radius:99px; height:8px; overflow:hidden; margin-bottom:0.5rem; }
-.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#3b82f6,#10b981); transition:width 0.5s; }
-.progress-pct { font-size:0.8rem; color:#6b7280; }
-.goal-actions { display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap; }
-.btn-action { padding:0.45rem 1.1rem; border-radius:8px; border:none; cursor:pointer; font-size:0.83rem; font-weight:500; }
-.btn-green { background:#10b981; color:white; }
-.btn-green:hover { background:#059669; }
-.btn-dark { background:#1f2937; color:#d1d5db; border:1px solid #374151; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; }
-th { background:#1a1a1a; text-align:left; padding:0.75rem 1rem; font-size:0.75rem; text-transform:uppercase; color:#6b7280; }
-td { padding:0.9rem 1rem; border-top:1px solid #1f2937; font-size:0.88rem; color:#d1d5db; }
-tr:hover td { background:#1a1a1a; }
-.badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:99px; font-size:0.73rem; font-weight:500; }
-.badge-green { background:#052e16; color:#86efac; border:1px solid #166534; }
-.empty-msg { text-align:center; padding:2rem; color:#4b5563; font-size:0.88rem; }
-.no-goals-banner { background:#161616; border:1px dashed #2a2a2a; border-radius:12px; padding:2rem; text-align:center; color:#4b5563; margin-bottom:1rem; }
-.no-goals-banner .icon { font-size:2.5rem; margin-bottom:0.75rem; }
-.no-goals-banner p { font-size:0.9rem; }
-.no-goals-banner a { color:#3b82f6; cursor:pointer; }
-@media(max-width:600px){ .form-row{grid-template-columns:1fr;} nav{padding:1rem;} .container{padding:0 1rem;} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e7eb; }
+        .header { background: #1a1a1a; border-bottom: 1px solid #333; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav a { color: #9ca3af; text-decoration: none; font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .nav a:hover, .nav a.active { color: #667eea; }
+        .logout-btn { background: #333; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .logout-btn:hover { background: #444; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; color: #fff; }
+        .subtitle { color: #9ca3af; margin-bottom: 2rem; }
+        .user-info { text-align: right; font-size: 0.85rem; color: #9ca3af; }
+        .btn { padding: 0.7rem 1.5rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.95rem; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5a67d8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+        .btn-secondary { background: #e2e8f0; color: #2d3748; }
+        .btn-secondary:hover { background: #cbd5e0; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .stat-card { background: #1a1a1a; padding: 1.5rem; border-radius: 8px; border: 1px solid #333; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .stat-card h3 { font-size: 0.85rem; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+        .stat-card .change { font-size: 0.85rem; color: #10b981; }
+        .goal-card { background: #1a1a1a; border: 1px solid #333; border-left: 4px solid #667eea; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .goal-card.joint { border-left-color: #f59e0b; }
+        .goal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+        .goal-title { font-size: 1.3rem; font-weight: 600; }
+        .goal-subtitle { color: #718096; font-size: 0.9rem; margin-top: 0.3rem; }
+        .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .progress-bar { width: 100%; height: 32px; background: #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 0.5rem; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #10b981 100%); transition: width 0.5s; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem; }
+        .stats-row { display: flex; justify-content: space-between; color: #4a5568; font-size: 0.9rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+        .stats-row strong { color: #1a202c; }
+        .time-remaining { color: #ef4444; font-weight: 600; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .product-card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.5); transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 4px 12px rgba(102,126,234,0.3); }
+        .product-image { height: 200px; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { padding: 1.2rem; }
+        .product-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
+        .product-price { font-size: 1.6rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem; }
+        .product-rating { color: #f59e0b; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .product-details { color: #9ca3af; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 2rem; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #333; }
+        .modal-header h2 { font-size: 1.6rem; color: #fff; }
+        .modal-close { background: none; border: none; font-size: 2rem; cursor: pointer; color: #9ca3af; line-height: 1; }
+        .modal-close:hover { color: #ef4444; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.95rem; background: #0a0a0a; color: #fff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-hint { font-size: 0.85rem; color: #9ca3af; margin-top: 0.5rem; }
+        .info-box { background: rgba(245,158,11,0.1); border-left: 4px solid #f59e0b; border-radius: 6px; padding: 1rem; margin: 1rem 0; color: #fbbf24; }
+        .warning-box { background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; border-radius: 6px; padding: 1rem; margin: 1rem 0; color: #f87171; }
+        .success-box { background: rgba(16,185,129,0.1); border-left: 4px solid #10b981; border-radius: 6px; padding: 1rem; margin: 1rem 0; color: #34d399; }
+        .table-container { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; overflow-x: auto; margin: 2rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #0a0a0a; padding: 1rem; text-align: left; font-weight: 600; border-bottom: 2px solid #333; white-space: nowrap; color: #fff; }
+        .table td { padding: 1rem; border-bottom: 1px solid #333; color: #e5e7eb; }
+        .table tr:hover { background: #222; }
+        .order-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .order-type-card { background: #0a0a0a; border: 3px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .order-type-card:hover { border-color: #667eea; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(102,126,234,0.2); }
+        .order-type-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .order-type-title { font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+        .order-type-desc { color: #9ca3af; font-size: 0.9rem; line-height: 1.5; }
+        .toast { position: fixed; top: 2rem; right: 2rem; background: #10b981; color: white; padding: 1rem 1.5rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 2000; display: none; max-width: 400px; }
+        .toast.show { display: block; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .wishlist-item { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .wishlist-info h3 { font-size: 1.2rem; margin-bottom: 0.3rem; color: #fff; }
+        .wishlist-info .details { color: #9ca3af; font-size: 0.9rem; }
+        .contribution-box { background: #0a0a0a; padding: 1rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #333; }
+        .contribution-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #333; color: #e5e7eb; }
+        .contribution-item:last-child { border-bottom: none; }
+        
+        /* Auto-Pay Toggle Switch */
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: 0.4s; border-radius: 34px; }
+        .toggle-slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: 0.4s; border-radius: 50%; }
+        .toggle-switch input:checked + .toggle-slider { background-color: #667eea; }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(26px); }
+        
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .stats-grid, .product-grid, .order-type-grid { grid-template-columns: 1fr; }
+            .goal-header { flex-direction: column; }
+            .wishlist-item { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
 </head>
 <body>
+    <header class="header">
+        <div class="header-content">
+            <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="20" width="15" height="3" rx="1.5" fill="#3b82f6" opacity="0.4"/>
+              <rect x="10" y="27" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
+              <rect x="10" y="34" width="30" height="3" rx="1.5" fill="url(#goldGrad)"/>
+              <circle cx="42" cy="35.5" r="4.5" fill="#f59e0b"/>
+              <path d="M 40.5 35.5 L 42 37 L 44 34" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <text x="52" y="36" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">PrePae</text>
+              <text x="53" y="44" font-family="Inter, sans-serif" font-size="6" font-weight="500" fill="#3b82f6" letter-spacing="1">PREPARE. PAY. ACHIEVE.</text>
+            </svg>
+            <nav class="nav">
+                <a onclick="showPage('dashboard')" class="active">Dashboard</a>
+                <a onclick="showPage('store')">Browse Store</a>
+                <a onclick="showPage('wishlist')">Wishlist (<span id="wishlistCount">3</span>)</a>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </nav>
+        </div>
+    </header>
 
-<div id="login-screen">
-  <div class="auth-box">
-    <div class="auth-logo-wrap"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="auth-logo-text">PrePae</div></div>
-    <div class="auth-sub">Customer Portal</div>
-    <div id="login-alert" class="alert alert-error"></div>
-    <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="you@email.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="Password"></div>
-    <button class="btn" onclick="doLogin()">Sign In</button>
-    <div class="auth-footer">
-      <a href="index.html">&larr; Back to home</a> &nbsp;&bull;&nbsp;
-      New customer? <a onclick="showRegister()">Create account</a>
-    </div>
-  </div>
-</div>
+    <div id="toast" class="toast"></div>
 
-<div id="register-screen">
-  <div class="auth-box">
-    <div class="auth-logo-wrap"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="auth-logo-text">PrePae</div></div>
-    <div class="auth-sub">Create Account</div>
-    <div id="reg-alert" class="alert alert-error"></div>
-    <div class="form-row">
-      <div class="form-group"><label>First Name</label><input type="text" id="reg-first" placeholder="John"></div>
-      <div class="form-group"><label>Last Name</label><input type="text" id="reg-last" placeholder="Doe"></div>
-    </div>
-    <div class="form-group"><label>Email Address</label><input type="email" id="reg-email" placeholder="you@email.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="reg-password" placeholder="Create a password"></div>
-    <div class="form-group"><label>Confirm Password</label><input type="password" id="reg-confirm" placeholder="Confirm password"></div>
-    <button class="btn" onclick="doRegister()">Create Account</button>
-    <div class="auth-footer">Already have an account? <a onclick="showLogin()">Sign in</a></div>
-  </div>
-</div>
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard" class="page active">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1>Welcome Back, LeRon</h1>
+                    <p class="subtitle">Here's your savings overview</p>
+                </div>
+                <div class="user-info">
+                    <div>Account: <strong>#BIGDOG247</strong></div>
+                    <div>Member since: <strong>Jan 2026</strong></div>
+                </div>
+            </div>
 
-<div id="app-screen">
-  <nav>
-    <a class="logo-wrap" href="index.html"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="logo-text">PrePae</div></a>
-    <div class="nav-right">
-      <span class="nav-user" id="nav-username"></span>
-      <button class="nav-logout" onclick="doLogout()">Sign Out</button>
-    </div>
-  </nav>
-  <div class="tabs">
-    <div class="tab active" onclick="showTab('dashboard',this)">Dashboard</div>
-    <div class="tab" onclick="showTab('goals',this)">My Goals</div>
-    <div class="tab" onclick="showTab('payments',this)">Payments</div>
-    <div class="tab" onclick="showTab('profile',this)">Profile</div>
-    <div class="tab" onclick="showTab('support',this)">Support</div>
-  </div>
-  <div class="container">
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="openModal('createGoalModal')">+ Create Savings Goal</button>
+                <button class="btn btn-secondary" onclick="showPage('store')">Browse Products</button>
+            </div>
 
-    <!-- DASHBOARD -->
-    <div id="page-dashboard" class="page active">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Saved</div>
-          <div class="stat-value" id="stat-saved">$0.00</div>
-          <div class="stat-sub">Across all goals</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Active Goals</div>
-          <div class="stat-value" id="stat-goals">0</div>
-          <div class="stat-sub">In progress</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Next Payment</div>
-          <div class="stat-value" id="stat-next">&mdash;</div>
-          <div class="stat-sub">Auto-pay scheduled</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Completed</div>
-          <div class="stat-value" id="stat-completed">0</div>
-          <div class="stat-sub">Items claimed</div>
-        </div>
-      </div>
+            <h2 style="font-size: 1.5rem; margin: 2rem 0 1rem;">Your Savings Insights</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Saved This Year</h3>
+                    <div class="value">$0</div>
+                    <div class="change">Top 15% of savers! 🎉</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Goals Completed</h3>
+                    <div class="value">0</div>
+                    <div class="change">0% completion rate ⭐</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Monthly Savings</h3>
+                    <div class="value">$0</div>
+                    <div class="change">↑ 18% from last quarter</div>
+                </div>
+            </div>
 
-      <div class="section-title">Active Goals</div>
-      <div id="dashboard-goals">
-        <div class="no-goals-banner">
-          <div class="icon">🎯</div>
-          <p>You have no active goals yet.<br><a onclick="document.querySelectorAll('.tab')[1].click()">Create your first layaway goal</a> to get started.</p>
-        </div>
-      </div>
+            <h2 style="font-size: 1.5rem; margin: 2rem 0 1rem;">Active Goals</h2>
 
-      <div class="section-title" style="margin-top:2rem;">Recent Payments</div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Goal</th><th>Amount</th><th>Status</th></tr></thead>
-            <tbody id="recent-pay-table">
-              <tr><td colspan="4" class="empty-msg">No payments yet.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            <!-- LAYAWAY GOAL -->
+            <div class="goal-card" id="goal1">
+                <div class="goal-header">
+                    <div>
+                        <div class="goal-title">🛋️ Premium Leather Sofa</div>
+                        <div class="goal-subtitle">Delta Furniture Co. • Layaway</div>
+                    </div>
+                    <span class="badge badge-success">0% COMPLETE</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:0%">0%</div>
+                </div>
+                <div class="stats-row">
+                    <span>Paid: <strong style="color: #10b981;">$0.00</strong></span>
+                    <span>Goal: <strong>$1,299.00</strong></span>
+                    <span>Remaining: <strong>$1,299.00</strong></span>
+                    <span class="time-remaining">⏱ 142 days left</span>
+                </div>
+                <div class="info-box">
+                    💡 Service fees: $1.50 per payment • Merchant deadline: 6 months (142 days remaining)
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="openPaymentModal('goal1', 'Premium Leather Sofa', 1299, 0)" style="flex: 1;">Make Payment</button>
+                    <button class="btn btn-secondary" onclick="viewHistory('goal1')">History</button>
+                    <button class="btn btn-secondary" onclick="shareGoal('goal1')">Share</button>
+                </div>
+            </div>
 
-    <!-- GOALS -->
-    <div id="page-goals" class="page">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-        <div class="section-title" style="margin:0;">My Layaway Goals</div>
-        <button class="btn-action btn-green" onclick="document.getElementById('new-goal-form').style.display='block'">+ New Goal</button>
-      </div>
-      <div id="new-goal-form" style="display:none;" class="card">
-        <div class="section-title">Create New Goal</div>
-        <div id="goal-alert" class="alert"></div>
-        <div class="form-row">
-          <div class="form-group"><label>Goal Name</label><input type="text" id="goal-name" placeholder="e.g. New TV"></div>
-          <div class="form-group"><label>Target Amount ($)</label><input type="number" id="goal-target" placeholder="500.00"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Merchant</label><select id="goal-merchant"><option>Select merchant...</option><option>Best Buy</option><option>Walmart</option><option>Target</option><option>Amazon</option><option>Other</option></select></div>
-          <div class="form-group"><label>Auto-Pay Amount ($)</label><input type="number" id="goal-autopay" placeholder="50.00"></div>
-        </div>
-        <div class="form-group"><label>Item Description</label><input type="text" id="goal-product" placeholder="What are you saving for?"></div>
-        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-          <button class="btn-action btn-green" onclick="createGoal()">Create Goal</button>
-          <button class="btn-action btn-dark" onclick="document.getElementById('new-goal-form').style.display='none'">Cancel</button>
-        </div>
-      </div>
-      <div id="goals-list">
-        <div class="no-goals-banner"><div class="icon">🎯</div><p>No goals yet. Click &ldquo;+ New Goal&rdquo; to get started.</p></div>
-      </div>
-    </div>
+            <!-- JOINT GOAL -->
+            <div class="goal-card joint" id="goal2">
+                <div class="goal-header">
+                    <div>
+                        <div class="goal-title">🏖️ Family Vacation Fund</div>
+                        <div class="goal-subtitle" style="color: #f59e0b;">with Sarah Johnson • Joint Savings</div>
+                    </div>
+                    <span class="badge badge-warning">0% COMPLETE</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:0%; background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);">0%</div>
+                </div>
+                <div class="stats-row">
+                    <span>Saved: <strong style="color: #10b981;">$0.00</strong></span>
+                    <span>Goal: <strong>$3,000.00</strong></span>
+                    <span>Remaining: <strong>$3,000.00</strong></span>
+                </div>
+                <div class="contribution-box">
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem; color: #f59e0b;">Contributions (Target: 50/50)</h4>
+                    <div class="contribution-item">
+                        <span>You</span>
+                        <span style="color: #10b981; font-weight: 600;">$0.00 (0%)</span>
+                    </div>
+                    <div class="contribution-item">
+                        <span>Sarah Johnson</span>
+                        <span style="color: #10b981; font-weight: 600;">$0.00 (0%)</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="openPaymentModal('goal2', 'Family Vacation Fund', 3000, 0)" style="flex: 1;">Make Payment</button>
+                    <button class="btn btn-secondary" onclick="manageJointGoal('goal2')">Manage</button>
+                </div>
+            </div>
 
-    <!-- PAYMENTS -->
-    <div id="page-payments" class="page">
-      <div class="section-title">Payment History</div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Goal</th><th>Amount</th><th>Fee</th><th>Net</th><th>Status</th></tr></thead>
-            <tbody id="payments-table">
-              <tr><td colspan="6" class="empty-msg">No payments yet.</td></tr>
-            </tbody>
-          </table>
+            <!-- PERSONAL SAVINGS -->
+            <div class="goal-card" id="goal3">
+                <div class="goal-header">
+                    <div>
+                        <div class="goal-title">💰 Emergency Fund</div>
+                        <div class="goal-subtitle">Personal Savings</div>
+                    </div>
+                    <span class="badge badge-success">0% COMPLETE</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:0%">0%</div>
+                </div>
+                <div class="stats-row">
+                    <span>Saved: <strong style="color: #10b981;">$0.00</strong></span>
+                    <span>Goal: <strong>$2,000.00</strong></span>
+                    <span>Remaining: <strong>$2,000.00</strong></span>
+                </div>
+                <div class="info-box">
+                    💡 Pay whenever you have money - no schedule required • Service fee: $1.50 per deposit
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="openPaymentModal('goal3', 'Emergency Fund', 2000, 0)" style="flex: 1;">Make Payment</button>
+                    <button class="btn btn-danger" onclick="openModal('withdrawModal')">Withdraw</button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="page-profile" class="page">
-      <div class="section-title">My Profile</div>
-      <div class="card">
-        <div id="profile-alert" class="alert alert-success"></div>
-        <div class="form-row">
-          <div class="form-group"><label>First Name</label><input type="text" id="profile-first" placeholder="First name"></div>
-          <div class="form-group"><label>Last Name</label><input type="text" id="profile-last" placeholder="Last name"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Email</label><input type="email" id="profile-email" placeholder="Email address"></div>
-          <div class="form-group"><label>Phone</label><input type="tel" id="profile-phone" placeholder="(555) 000-0000"></div>
-        </div>
-        <div class="form-group"><label>Address</label><input type="text" id="profile-address" placeholder="123 Main St, City, State"></div>
-        <button class="btn-action btn-green" style="margin-top:0.5rem;" onclick="saveProfile()">Save Changes</button>
-      </div>
-    </div>
-
-    <!-- SUPPORT -->
-    <div id="page-support" class="page">
-      <div class="section-title">Contact Support</div>
-      <div class="card">
-        <div id="support-alert" class="alert alert-success"></div>
-        <div class="form-group"><label>Subject</label><input type="text" id="support-subject" placeholder="What is this about?"></div>
-        <div class="form-group"><label>Category</label><select><option>General Question</option><option>Payment Issue</option><option>Goal Problem</option><option>Account Issue</option></select></div>
-        <div class="form-group"><label>Message</label><textarea id="support-msg" rows="5" placeholder="Describe your issue..."></textarea></div>
-        <button class="btn-action btn-green" style="margin-top:0.5rem;" onclick="sendSupport()">Send Message</button>
-      </div>
     </div>
 
-  </div>
-</div>
+    <!-- STORE PAGE -->
+    <div id="store" class="page">
+        <div class="container">
+            <h1>Browse Products & Businesses</h1>
 
-<script>
-let goals=[], payments=[];
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin: 2rem 0;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div class="form-group" style="margin: 0;">
+                        <label>Search</label>
+                        <input type="text" id="searchQuery" placeholder="Business name, product...">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label>Location</label>
+                        <input type="text" id="searchLocation" value="Amory, MS">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label>Radius</label>
+                        <select id="searchRadius">
+                            <option>Local (25 mi)</option>
+                            <option>Regional (100 mi)</option>
+                            <option selected>National</option>
+                            <option>International</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="searchBusinesses()">Search</button>
+                </div>
+            </div>
 
-function showLogin(){document.getElementById('register-screen').style.display='none';document.getElementById('login-screen').style.display='flex';}
-function showRegister(){document.getElementById('login-screen').style.display='none';document.getElementById('register-screen').style.display='flex';}
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Businesses Near You</h2>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Distance</th>
+                            <th>Products</th>
+                            <th>Rating</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="businessResults">
+                        <tr>
+                            <td><strong>Delta Furniture Co.</strong></td>
+                            <td>Furniture</td>
+                            <td>Amory, MS</td>
+                            <td style="color: #10b981; font-weight: 600;">2.3 mi</td>
+                            <td>23 items</td>
+                            <td>⭐⭐⭐⭐⭐ 4.8</td>
+                            <td><button class="btn btn-secondary" onclick="viewStore('Delta Furniture Co.')">View Store</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quick Stop Market</strong></td>
+                            <td>Convenience</td>
+                            <td>Amory, MS</td>
+                            <td style="color: #10b981; font-weight: 600;">0.8 mi</td>
+                            <td>89 items</td>
+                            <td>⭐⭐⭐⭐ 4.5</td>
+                            <td><button class="btn btn-secondary" onclick="viewStore('Quick Stop Market')">View Store</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mississippi Auto Parts</strong></td>
+                            <td>Automotive</td>
+                            <td>Tupelo, MS</td>
+                            <td style="color: #10b981; font-weight: 600;">15.7 mi</td>
+                            <td>47 items</td>
+                            <td>⭐⭐⭐⭐⭐ 4.9</td>
+                            <td><button class="btn btn-secondary" onclick="viewStore('Mississippi Auto Parts')">View Store</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-function doLogin(){
-  const e=document.getElementById('login-email').value,p=document.getElementById('login-password').value,a=document.getElementById('login-alert');
-  if(!e||!p){a.style.display='block';a.textContent='Please enter email and password.';return;}
-  a.style.display='none';
-  document.getElementById('nav-username').textContent=e.split('@')[0];
-  document.getElementById('profile-email').value=e;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-screen').style.display='block';
-}
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Featured Products</h2>
+            <div class="product-grid" id="productGrid">
+                <div class="product-card">
+                    <div class="product-image">🛋️</div>
+                    <div class="product-info">
+                        <div class="product-title">Premium Leather Sofa</div>
+                        <div class="product-price">$1,299.00</div>
+                        <div class="product-rating">⭐⭐⭐⭐⭐ 4.8 (47 reviews)</div>
+                        <div class="product-details">
+                            Luxurious 3-seater leather sofa<br>
+                            ⏱ Layaway: 6 months<br>
+                            📦 Prep: 2 weeks after payment<br>
+                            🚚 Ships nationally + Local pickup
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="openOrderModal('Premium Leather Sofa', 1299)" style="flex: 1;">Order Now</button>
+                            <button class="btn btn-secondary" onclick="addToWishlist('Premium Leather Sofa', 1299, 'Delta Furniture Co.')">❤</button>
+                        </div>
+                    </div>
+                </div>
 
-function doRegister(){
-  const first=document.getElementById('reg-first').value,last=document.getElementById('reg-last').value,email=document.getElementById('reg-email').value,pass=document.getElementById('reg-password').value,conf=document.getElementById('reg-confirm').value,a=document.getElementById('reg-alert');
-  if(!first||!last||!email||!pass){a.style.display='block';a.textContent='Please fill in all fields.';return;}
-  if(pass!==conf){a.style.display='block';a.textContent='Passwords do not match.';return;}
-  document.getElementById('nav-username').textContent=first+' '+last;
-  document.getElementById('profile-first').value=first;
-  document.getElementById('profile-last').value=last;
-  document.getElementById('profile-email').value=email;
-  document.getElementById('register-screen').style.display='none';
-  document.getElementById('app-screen').style.display='block';
-}
+                <div class="product-card">
+                    <div class="product-image">🍕</div>
+                    <div class="product-info">
+                        <div class="product-title">Pizza Combo</div>
+                        <div class="product-price">$8.99</div>
+                        <div class="product-rating">⭐⭐⭐⭐ 4.5 (12 reviews)</div>
+                        <div class="product-details">
+                            Hot pizza slice + chips + drink<br>
+                            📍 Quick Stop Market (0.8 mi)<br>
+                            ⚡ Instant pickup available<br>
+                            🕐 Ready in 10-15 minutes
+                        </div>
+                        <button class="btn btn-success" onclick="openOrderModal('Pizza Combo', 8.99)" style="width: 100%;">Order Now</button>
+                    </div>
+                </div>
 
-function doLogout(){goals=[];payments=[];document.getElementById('app-screen').style.display='none';document.getElementById('login-screen').style.display='flex';}
+                <div class="product-card">
+                    <div class="product-image">⚡</div>
+                    <div class="product-info">
+                        <div class="product-title">5000W Generator</div>
+                        <div class="product-price">$899.00</div>
+                        <div class="product-rating">⭐⭐⭐⭐⭐ 4.9 (31 reviews)</div>
+                        <div class="product-details">
+                            Portable emergency generator<br>
+                            ⏱ Layaway: 6 months<br>
+                            📦 Prep: 1 week after payment<br>
+                            📍 Local pickup only
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="openOrderModal('5000W Generator', 899)" style="flex: 1;">Order Now</button>
+                            <button class="btn btn-secondary" onclick="addToWishlist('5000W Generator', 899, 'Mississippi Auto Parts')">❤</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function showTab(n,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+n).classList.add('active');
-  el.classList.add('active');
-  if(n==='goals')renderGoals();
-  if(n==='payments')renderPayments();
-  if(n==='dashboard')renderDashboard();
-}
+    <!-- WISHLIST PAGE -->
+    <div id="wishlist" class="page">
+        <div class="container">
+            <h1>My Wishlist</h1>
+            <p class="subtitle">Items you've saved for later</p>
 
-function goalCard(g){
-  const p=Math.min(100,Math.round(g.current/g.target*100));
-  return '<div class="goal-card"><div class="goal-header"><div><div class="goal-name">'+g.name+'</div><div class="goal-merchant">'+g.merchant+(g.product?' &mdash; '+g.product:'')+'</div></div><div style="text-align:right"><div class="goal-current">$'+g.current.toFixed(2)+'</div><div class="goal-target">of $'+g.target.toFixed(2)+'</div></div></div><div class="progress-bar"><div class="progress-fill" style="width:'+p+'%"></div></div><div class="progress-pct">'+p+'% complete</div><div class="goal-actions"><button class="btn-action btn-green" onclick="pay('+g.id+')">Make Payment</button><button class="btn-action btn-dark">Details</button></div></div>';
-}
+            <div id="wishlistContainer">
+                <div class="wishlist-item">
+                    <div class="wishlist-info">
+                        <h3>Premium Leather Sofa</h3>
+                        <div class="details">Delta Furniture Co. • $1,299.00 • ⭐⭐⭐⭐⭐ 4.8</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="openOrderModal('Premium Leather Sofa', 1299)">Start Layaway</button>
+                        <button class="btn btn-danger" onclick="removeFromWishlist(this)">Remove</button>
+                    </div>
+                </div>
 
-function renderDashboard(){
-  const active=goals.filter(g=>g.current<g.target);
-  document.getElementById('stat-saved').textContent='$'+goals.reduce((s,g)=>s+g.current,0).toFixed(2);
-  document.getElementById('stat-goals').textContent=active.length;
-  document.getElementById('stat-next').textContent=active.length?'$'+active[0].autopay.toFixed(2):'&mdash;';
-  document.getElementById('stat-completed').textContent=goals.filter(g=>g.current>=g.target).length;
-  const dg=document.getElementById('dashboard-goals');
-  dg.innerHTML=active.length?active.map(goalCard).join(''):'<div class="no-goals-banner"><div class="icon">🎯</div><p>No active goals yet.<br><a onclick="document.querySelectorAll(\'.tab\')[1].click()">Create your first layaway goal</a> to get started.</p></div>';
-  document.getElementById('recent-pay-table').innerHTML=payments.length?payments.slice(0,5).map(p=>'<tr><td>'+p.date+'</td><td>'+p.goal+'</td><td>'+p.amount+'</td><td><span class="badge badge-green">Completed</span></td></tr>').join(''):'<tr><td colspan="4" class="empty-msg">No payments yet.</td></tr>';
-}
+                <div class="wishlist-item">
+                    <div class="wishlist-info">
+                        <h3>5000W Generator</h3>
+                        <div class="details">Mississippi Auto Parts • $899.00 • ⭐⭐⭐⭐⭐ 4.9</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="openOrderModal('5000W Generator', 899)">Start Layaway</button>
+                        <button class="btn btn-danger" onclick="removeFromWishlist(this)">Remove</button>
+                    </div>
+                </div>
 
-function renderGoals(){
-  document.getElementById('goals-list').innerHTML=goals.length?goals.map(goalCard).join(''):'<div class="no-goals-banner"><div class="icon">🎯</div><p>No goals yet. Click &ldquo;+ New Goal&rdquo; to get started.</p></div>';
-}
+                <div class="wishlist-item">
+                    <div class="wishlist-info">
+                        <h3>Dining Table Set</h3>
+                        <div class="details">Delta Furniture Co. • $749.00 • ⭐⭐⭐⭐ 4.7</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="openOrderModal('Dining Table Set', 749)">Start Layaway</button>
+                        <button class="btn btn-danger" onclick="removeFromWishlist(this)">Remove</button>
+                    </div>
+                </div>
+            </div>
 
-function renderPayments(){
-  document.getElementById('payments-table').innerHTML=payments.length?payments.map(p=>'<tr><td>'+p.date+'</td><td>'+p.goal+'</td><td>'+p.amount+'</td><td>'+p.fee+'</td><td>'+p.net+'</td><td><span class="badge badge-green">Completed</span></td></tr>').join(''):'<tr><td colspan="6" class="empty-msg">No payments yet.</td></tr>';
-}
+            <div class="info-box" style="margin-top: 2rem;">
+                💡 Share this wishlist with family/friends - they can contribute to your goals as gifts!
+            </div>
 
-function createGoal(){
-  const n=document.getElementById('goal-name').value,t=parseFloat(document.getElementById('goal-target').value),m=document.getElementById('goal-merchant').value,pr=document.getElementById('goal-product').value,a=parseFloat(document.getElementById('goal-autopay').value)||0,al=document.getElementById('goal-alert');
-  if(!n||!t||m==='Select merchant...'){al.className='alert alert-error';al.style.display='block';al.textContent='Please fill in all required fields.';return;}
-  goals.push({id:Date.now(),name:n,merchant:m,product:pr,target:t,current:0,autopay:a});
-  al.className='alert alert-success';al.style.display='block';al.textContent='Goal created!';
-  document.getElementById('goal-name').value='';document.getElementById('goal-target').value='';document.getElementById('goal-autopay').value='';document.getElementById('goal-product').value='';document.getElementById('goal-merchant').selectedIndex=0;
-  renderGoals();renderDashboard();
-  setTimeout(()=>{document.getElementById('new-goal-form').style.display='none';al.style.display='none';},1500);
-}
+            <button class="btn btn-success" onclick="shareWishlist()">Share Wishlist</button>
+        </div>
+    </div>
 
-function pay(id){
-  const amt=prompt('Enter payment amount ($):');
-  if(!amt||isNaN(amt)||parseFloat(amt)<=0)return;
-  const g=goals.find(x=>x.id===id);if(!g)return;
-  const net=parseFloat(amt)-1.5;
-  g.current=Math.min(g.target,g.current+net);
-  payments.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),goal:g.name,amount:'$'+parseFloat(amt).toFixed(2),fee:'$1.50',net:'$'+net.toFixed(2)});
-  renderDashboard();renderGoals();
-}
+    <!-- ORDER TYPE MODAL -->
+    <div id="orderTypeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="orderProduct">Product Name</h2>
+                <button class="modal-close" onclick="closeModal('orderTypeModal')">×</button>
+            </div>
+            <div style="font-size: 1.8rem; color: #10b981; font-weight: 700; margin-bottom: 2rem;">
+                $<span id="orderPrice">0.00</span>
+            </div>
 
-function saveProfile(){const a=document.getElementById('profile-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Profile updated!';setTimeout(()=>a.style.display='none',2000);}
-function sendSupport(){const s=document.getElementById('support-subject').value,m=document.getElementById('support-msg').value;if(!s||!m)return;const a=document.getElementById('support-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Message sent! We respond within 24 hours.';document.getElementById('support-subject').value='';document.getElementById('support-msg').value='';setTimeout(()=>a.style.display='none',3000);}
+            <div class="order-type-grid">
+                <div class="order-type-card" onclick="selectOrderType('instant')">
+                    <div class="order-type-icon">⚡</div>
+                    <div class="order-type-title">Instant Pickup</div>
+                    <div class="order-type-desc">
+                        Order now, pickup today<br>
+                        Must pickup within 4 hours<br>
+                        Cancellation fee applies
+                    </div>
+                </div>
+                <div class="order-type-card" onclick="selectOrderType('layaway')">
+                    <div class="order-type-icon">💰</div>
+                    <div class="order-type-title">Layaway Plan</div>
+                    <div class="order-type-desc">
+                        Pay over time<br>
+                        Get it when fully paid<br>
+                        Pay whenever you want
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Enter key to submit login
+    <!-- PAYMENT MODAL -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="paymentGoalName">Make Payment</h2>
+                <button class="modal-close" onclick="closeModal('paymentModal')">×</button>
+            </div>
+            <div style="font-size: 1.4rem; color: #10b981; margin-bottom: 1rem;">
+                Total: $<span id="paymentGoalTotal">0.00</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="paymentProgress" style="width: 0%">0%</div>
+            </div>
+            <div class="stats-row" style="margin-bottom: 1.5rem;">
+                <span>Paid: $<span id="paymentPaid">0.00</span></span>
+                <span>Goal: $<span id="paymentTotal">0.00</span></span>
+            </div>
+
+            <div class="form-group">
+                <label>Payment Amount (Pay Anytime - No Schedule Required)</label>
+                <input type="number" id="paymentAmount" placeholder="$0.00" step="0.01" min="1">
+                <div class="form-hint">
+                    Service fee of $1.50 will be deducted (e.g., $100 payment = $98.50 toward goal)
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+                <button class="btn btn-secondary" onclick="setPaymentAmount(50)">$50</button>
+                <button class="btn btn-secondary" onclick="setPaymentAmount(100)">$100</button>
+                <button class="btn btn-secondary" onclick="setPaymentAmount(200)">$200</button>
+            </div>
+
+            <!-- AUTO-PAY TOGGLE -->
+            <div style="background: rgba(102,126,234,0.1); border: 2px solid #667eea; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="font-weight: 600; margin-bottom: 0.3rem; color: #fff;">🔄 Enable Auto-Pay</h4>
+                        <div style="font-size: 0.85rem; color: #9ca3af;">Set it and forget it - payments process automatically</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoPayToggle" onchange="toggleAutoPay()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <!-- AUTO-PAY SETTINGS (Hidden by default) -->
+                <div id="autoPaySettings" style="display: none; border-top: 1px solid #333; padding-top: 1rem; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Payment Frequency</label>
+                        <select id="autoPayFrequency" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                            <option value="weekly">Weekly (Every 7 days)</option>
+                            <option value="biweekly" selected>Bi-Weekly (Every 14 days)</option>
+                            <option value="monthly">Monthly (Every 30 days)</option>
+                            <option value="custom">Custom Schedule</option>
+                        </select>
+                    </div>
+
+                    <div id="customSchedule" style="display: none; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Every __ Days</label>
+                            <input type="number" id="customDays" min="1" max="90" placeholder="e.g., 10" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Auto-Pay Amount</label>
+                        <select id="autoPayAmount" onchange="updateAutoPayAmount()" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                            <option value="fixed">Fixed Amount</option>
+                            <option value="percentage">Percentage of Remaining</option>
+                            <option value="calculated">Calculated to Complete by Deadline</option>
+                        </select>
+                    </div>
+
+                    <div id="fixedAmountInput" class="form-group">
+                        <label>Payment Amount Per Cycle</label>
+                        <input type="number" id="autoPayFixedAmount" placeholder="$50.00" step="0.01" min="5" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                        <div class="form-hint">$1.50 service fee applies per payment</div>
+                    </div>
+
+                    <div id="percentageInput" class="form-group" style="display: none;">
+                        <label>Percentage of Remaining Balance</label>
+                        <select id="autoPayPercentage" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                            <option value="10">10% of remaining</option>
+                            <option value="15">15% of remaining</option>
+                            <option value="20">20% of remaining</option>
+                            <option value="25" selected>25% of remaining</option>
+                            <option value="50">50% of remaining</option>
+                        </select>
+                    </div>
+
+                    <div id="calculatedInfo" style="display: none; background: rgba(16,185,129,0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #10b981; color: #34d399;">
+                        <strong>Smart Auto-Pay:</strong> System will calculate payments to complete your goal by the merchant deadline. Payments adjust automatically as you get closer to the goal.
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="autoPayMethod" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                            <option value="">Select payment method...</option>
+                            <option value="card_1234">Visa ending in 1234</option>
+                            <option value="card_5678">Mastercard ending in 5678</option>
+                            <option value="new">+ Add new card</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="autoPayStartDate" style="width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; background: #0a0a0a; color: #fff;">
+                    </div>
+
+                    <div class="info-box">
+                        💡 <strong>You stay in control:</strong><br>
+                        • Cancel anytime with one click<br>
+                        • Skip individual payments if needed<br>
+                        • Adjust amount or frequency anytime<br>
+                        • Email notification 2 days before each payment
+                    </div>
+
+                    <div id="autoPayPreview" style="background: rgba(102,126,234,0.1); padding: 1rem; border-radius: 6px; margin-top: 1rem; border: 1px solid #667eea;">
+                        <strong style="color: #fff;">Auto-Pay Preview:</strong>
+                        <div style="margin-top: 0.5rem; color: #9ca3af; font-size: 0.9rem;">
+                            <div>Frequency: <span id="previewFrequency">Bi-Weekly</span></div>
+                            <div>Amount: <span id="previewAmount">$50.00</span></div>
+                            <div>Next Payment: <span id="previewNextDate">-</span></div>
+                            <div>Estimated Completion: <span id="previewCompletion">-</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(10,10,10,0.8); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #333;">
+                <h4 style="font-weight: 600; margin-bottom: 1rem; color: #fff;">Payment Calculator (Suggestions Only)</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="margin: 0;">
+                        <label>Amount</label>
+                        <input type="number" id="calcAmount" placeholder="$100" oninput="calculatePayoff()">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label>Frequency</label>
+                        <select id="calcFrequency" onchange="calculatePayoff()">
+                            <option value="7">Weekly</option>
+                            <option value="14">Bi-Weekly</option>
+                            <option value="30" selected>Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="calcResults" style="background: white; padding: 1rem; border-radius: 6px; display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Payments:</span>
+                        <strong id="calcPayments">-</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Time:</span>
+                        <strong id="calcTime" style="color: #10b981;">-</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Completion:</span>
+                        <strong id="calcDate" style="color: #667eea;">-</strong>
+                    </div>
+                </div>
+                <div class="form-hint" style="margin-top: 1rem;">
+                    💡 These are suggestions to help you plan - pay whenever you actually have money!
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="makePayment()" style="width: 100%;">Make Payment</button>
+            
+            <div class="info-box" style="margin-top: 1.5rem;">
+                💡 No forced schedule - pay $50 today, $20 next week, $300 next month - whatever works for you!
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE GOAL MODAL -->
+    <div id="createGoalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Savings Goal</h2>
+                <button class="modal-close" onclick="closeModal('createGoalModal')">×</button>
+            </div>
+
+            <div class="form-group">
+                <label>Goal Type</label>
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="goalType" value="personal" checked onchange="toggleJointOptions()">
+                        <span>Personal Goal</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="goalType" value="joint" onchange="toggleJointOptions()">
+                        <span>Joint Goal (with partner)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Goal Name *</label>
+                <input type="text" id="newGoalName" placeholder="e.g., Emergency Fund, Vacation">
+            </div>
+
+            <div class="form-group">
+                <label>Target Amount *</label>
+                <input type="number" id="newGoalAmount" placeholder="$0.00" step="0.01" min="1">
+            </div>
+
+            <div id="jointOptions" style="display: none;">
+                <div class="form-group">
+                    <label>Partner Email</label>
+                    <input type="email" id="partnerEmail" placeholder="partner@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Contribution Split</label>
+                    <select id="splitType">
+                        <option>Equal (50/50)</option>
+                        <option>Custom percentage</option>
+                        <option>Flexible (anyone pays anything)</option>
+                    </select>
+                </div>
+                <div class="info-box">
+                    💡 Your partner will receive an email invitation to join this goal
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="createGoal()" style="width: 100%;">Create Goal</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Withdraw Funds</h2>
+                <button class="modal-close" onclick="closeModal('withdrawModal')">×</button>
+            </div>
+
+            <div class="warning-box">
+                ⚠️ <strong>Withdrawal Fees Apply:</strong><br>
+                Days 0-7: FREE (100% refund)<br>
+                Days 8-30: 5% fee<br>
+                Days 31-90: 10% fee<br>
+                Days 91+: 15% fee<br><br>
+                Processing time: 10-14 business days<br>
+                Fee split: 50% platform, 50% original merchant
+            </div>
+
+            <div class="form-group">
+                <label>Withdrawal Amount</label>
+                <input type="number" id="withdrawAmount" placeholder="$0.00" step="0.01" min="1" oninput="calculateWithdrawal()">
+            </div>
+
+            <div style="background: #f7fafc; padding: 1rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Current Balance:</span>
+                    <strong style="color: #10b981;">$<span id="withdrawBalance">847.00</span></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Withdrawal Fee (<span id="withdrawFeePercent">10</span>%):</span>
+                    <strong style="color: #ef4444;">-$<span id="withdrawFee">84.70</span></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 2px solid #e2e8f0; font-weight: 600;">
+                    <span>You'll Receive:</span>
+                    <strong style="color: #10b981;">$<span id="withdrawNet">762.30</span></strong>
+                </div>
+            </div>
+
+            <div class="info-box">
+                💡 <strong>Alternative:</strong> Request platform credit instead for 100% value (no cash penalty)
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-danger" onclick="confirmWithdrawal()" style="flex: 1;">Confirm Cash Withdrawal</button>
+                <button class="btn btn-success" onclick="platformCredit()" style="flex: 1;">Get Platform Credit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentGoalData = {};
+        let currentOrderData = {};
+        let wishlistItems = 3;
+
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // Modal management
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Toast notifications
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // Payment modal
+        function openPaymentModal(goalId, name, total, paid) {
+            currentGoalData = { goalId, name, total, paid };
+            document.getElementById('paymentGoalName').textContent = name;
+            document.getElementById('paymentGoalTotal').textContent = total.toFixed(2);
+            document.getElementById('paymentPaid').textContent = paid.toFixed(2);
+            document.getElementById('paymentTotal').textContent = total.toFixed(2);
+            const percent = Math.round((paid / total) * 100);
+            document.getElementById('paymentProgress').style.width = percent + '%';
+            document.getElementById('paymentProgress').textContent = percent + '%';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('calcResults').style.display = 'none';
+            openModal('paymentModal');
+        }
+
+        function setPaymentAmount(amount) {
+            document.getElementById('paymentAmount').value = amount;
+        }
+
+        function calculatePayoff() {
+            const amount = parseFloat(document.getElementById('calcAmount').value);
+            const frequency = parseInt(document.getElementById('calcFrequency').value);
+            const remaining = currentGoalData.total - currentGoalData.paid;
+            
+            if (!amount || amount <= 0) {
+                document.getElementById('calcResults').style.display = 'none';
+                return;
+            }
+
+            const netPayment = amount - 1.50;
+            const numPayments = Math.ceil(remaining / netPayment);
+            const totalDays = numPayments * frequency;
+            const months = Math.floor(totalDays / 30);
+            const weeks = Math.floor(totalDays / 7);
+            const timeString = months > 0 ? `${months} month${months > 1 ? 's' : ''}` : `${weeks} week${weeks > 1 ? 's' : ''}`;
+            
+            const completionDate = new Date();
+            completionDate.setDate(completionDate.getDate() + totalDays);
+            const dateString = completionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            document.getElementById('calcPayments').textContent = numPayments;
+            document.getElementById('calcTime').textContent = timeString;
+            document.getElementById('calcDate').textContent = dateString;
+            document.getElementById('calcResults').style.display = 'block';
+        }
+
+        function makePayment() {
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const autoPayEnabled = document.getElementById('autoPayToggle').checked;
+            
+            if (autoPayEnabled) {
+                const frequency = document.getElementById('autoPayFrequency').value;
+                const paymentMethod = document.getElementById('autoPayMethod').value;
+                const startDate = document.getElementById('autoPayStartDate').value;
+                
+                if (!paymentMethod) {
+                    alert('Please select a payment method for auto-pay');
+                    return;
+                }
+                
+                if (!startDate) {
+                    alert('Please select a start date for auto-pay');
+                    return;
+                }
+                
+                if (confirm('Set up auto-pay for this goal? You can cancel or modify anytime from your dashboard.')) {
+                    closeModal('paymentModal');
+                    const startDateFormatted = new Date(startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    showToast(`✅ Auto-Pay activated! First payment will process on ${startDateFormatted}. You'll receive an email 2 days before each payment.`);
+                }
+                return;
+            }
+            
+            // Regular one-time payment
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid payment amount');
+                return;
+            }
+
+            const netPayment = amount - 1.50;
+            currentGoalData.paid += netPayment;
+            if (currentGoalData.paid > currentGoalData.total) currentGoalData.paid = currentGoalData.total;
+            const remaining = currentGoalData.total - currentGoalData.paid;
+            
+            closeModal('paymentModal');
+            
+            if (remaining <= 0) {
+                showToast(`🎉 Goal complete! ${currentGoalData.name} is fully funded!`);
+            } else {
+                showToast(`Payment of $${netPayment.toFixed(2)} processed! $${remaining.toFixed(2)} remaining.`);
+            }
+
+            const goalCard = document.getElementById(currentGoalData.goalId);
+            const percent = Math.round((currentGoalData.paid / currentGoalData.total) * 100);
+            goalCard.querySelector('.progress-fill').style.width = percent + '%';
+            goalCard.querySelector('.progress-fill').textContent = percent + '%';
+            goalCard.querySelector('.badge').textContent = percent + '% COMPLETE';
+        }
+
+        // Order modal
+        function openOrderModal(productName, price) {
+            currentOrderData = { productName, price };
+            document.getElementById('orderProduct').textContent = productName;
+            document.getElementById('orderPrice').textContent = price.toFixed(2);
+            openModal('orderTypeModal');
+        }
+
+        function selectOrderType(type) {
+            closeModal('orderTypeModal');
+            if (type === 'instant') {
+                showToast(`🔔 Order placed! Your ${currentOrderData.productName} will be ready in 10-15 minutes. Must pickup within 4 hours.`);
+            } else {
+                showToast(`Starting layaway plan for ${currentOrderData.productName}...`);
+                setTimeout(() => {
+                    openPaymentModal('newGoal', currentOrderData.productName, currentOrderData.price, 0);
+                }, 500);
+            }
+        }
+
+        // Create goal
+        function toggleJointOptions() {
+            const isJoint = document.querySelector('input[name="goalType"]:checked').value === 'joint';
+            document.getElementById('jointOptions').style.display = isJoint ? 'block' : 'none';
+        }
+
+        function createGoal() {
+            const name = document.getElementById('newGoalName').value;
+            const amount = parseFloat(document.getElementById('newGoalAmount').value);
+            const type = document.querySelector('input[name="goalType"]:checked').value;
+            
+            if (!name || !amount) {
+                alert('Please fill in goal name and amount');
+                return;
+            }
+
+            closeModal('createGoalModal');
+            showToast(`${type === 'joint' ? 'Joint' : 'Personal'} goal "${name}" created! ${type === 'joint' ? 'Invitation sent to partner.' : 'Start making payments.'}`);
+        }
+
+        // Wishlist
+        function addToWishlist(productName, price, merchant) {
+            wishlistItems++;
+            document.getElementById('wishlistCount').textContent = wishlistItems;
+            showToast(`❤ ${productName} added to wishlist!`);
+        }
+
+        function removeFromWishlist(btn) {
+            btn.closest('.wishlist-item').remove();
+            wishlistItems--;
+            document.getElementById('wishlistCount').textContent = wishlistItems;
+            showToast('Item removed from wishlist');
+        }
+
+        function shareWishlist() {
+            showToast('Wishlist link copied to clipboard!');
+        }
+
+        // Auto-Pay Functions
+        function toggleAutoPay() {
+            const toggle = document.getElementById('autoPayToggle');
+            const settings = document.getElementById('autoPaySettings');
+            
+            if (toggle.checked) {
+                settings.style.display = 'block';
+                updateAutoPayPreview();
+            } else {
+                settings.style.display = 'none';
+            }
+        }
+
+        function updateAutoPayAmount() {
+            const amountType = document.getElementById('autoPayAmount').value;
+            
+            document.getElementById('fixedAmountInput').style.display = amountType === 'fixed' ? 'block' : 'none';
+            document.getElementById('percentageInput').style.display = amountType === 'percentage' ? 'block' : 'none';
+            document.getElementById('calculatedInfo').style.display = amountType === 'calculated' ? 'block' : 'none';
+            
+            updateAutoPayPreview();
+        }
+
+        function updateAutoPayPreview() {
+            const frequency = document.getElementById('autoPayFrequency').value;
+            const amountType = document.getElementById('autoPayAmount').value;
+            const startDate = document.getElementById('autoPayStartDate').value;
+            
+            const freqMap = {
+                'weekly': 'Every 7 days',
+                'biweekly': 'Every 14 days', 
+                'monthly': 'Every 30 days',
+                'custom': 'Custom schedule'
+            };
+            document.getElementById('previewFrequency').textContent = freqMap[frequency] || 'Bi-Weekly';
+            
+            let paymentAmount = 0;
+            
+            if (amountType === 'fixed') {
+                paymentAmount = parseFloat(document.getElementById('autoPayFixedAmount').value) || 50;
+            } else if (amountType === 'percentage') {
+                const pct = parseInt(document.getElementById('autoPayPercentage').value);
+                const remaining = currentGoalData.total - currentGoalData.paid;
+                paymentAmount = (remaining * pct) / 100;
+            } else if (amountType === 'calculated') {
+                const remaining = currentGoalData.total - currentGoalData.paid;
+                const daysLeft = 142;
+                const freqDays = frequency === 'weekly' ? 7 : frequency === 'biweekly' ? 14 : 30;
+                const numPayments = Math.floor(daysLeft / freqDays);
+                paymentAmount = numPayments > 0 ? remaining / numPayments : remaining;
+            }
+            
+            document.getElementById('previewAmount').textContent = '$' + paymentAmount.toFixed(2);
+            
+            if (startDate) {
+                const start = new Date(startDate);
+                document.getElementById('previewNextDate').textContent = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                
+                const remaining = currentGoalData.total - currentGoalData.paid;
+                const netPayment = paymentAmount - 1.50;
+                const numPayments = Math.ceil(remaining / netPayment);
+                const freqDays = frequency === 'weekly' ? 7 : frequency === 'biweekly' ? 14 : 30;
+                const totalDays = numPayments * freqDays;
+                
+                const completionDate = new Date(start);
+                completionDate.setDate(completionDate.getDate() + totalDays);
+                document.getElementById('previewCompletion').textContent = completionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            } else {
+                document.getElementById('previewNextDate').textContent = '-';
+                document.getElementById('previewCompletion').textContent = '-';
+            }
+        }
+
+        // Initialize auto-pay listeners
+        window.addEventListener('DOMContentLoaded', function() {
+            const freqSelect = document.getElementById('autoPayFrequency');
+            if (freqSelect) {
+                freqSelect.addEventListener('change', function() {
+                    document.getElementById('customSchedule').style.display = this.value === 'custom' ? 'block' : 'none';
+                    updateAutoPayPreview();
+                });
+            }
+
+            const autoPayFixedAmount = document.getElementById('autoPayFixedAmount');
+            if (autoPayFixedAmount) {
+                autoPayFixedAmount.addEventListener('input', updateAutoPayPreview);
+            }
+
+            const autoPayPercentage = document.getElementById('autoPayPercentage');
+            if (autoPayPercentage) {
+                autoPayPercentage.addEventListener('change', updateAutoPayPreview);
+            }
+
+            const autoPayStartDate = document.getElementById('autoPayStartDate');
+            if (autoPayStartDate) {
+                autoPayStartDate.addEventListener('change', updateAutoPayPreview);
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                autoPayStartDate.value = tomorrow.toISOString().split('T')[0];
+            }
+        });
+
+        // Withdrawal
+        function calculateWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+            const balance = 847.00;
+            
+            // Determine fee based on days (example: 10% for 31-90 days)
+            const feePercent = 10;
+            const fee = amount * (feePercent / 100);
+            const net = amount - fee;
+
+            document.getElementById('withdrawFeePercent').textContent = feePercent;
+            document.getElementById('withdrawFee').textContent = fee.toFixed(2);
+            document.getElementById('withdrawNet').textContent = net.toFixed(2);
+        }
+
+        function confirmWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a withdrawal amount');
+                return;
+            }
+            closeModal('withdrawModal');
+            showToast('Withdrawal requested - processing in 10-14 business days');
+        }
+
+        function platformCredit() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a withdrawal amount');
+                return;
+            }
+            closeModal('withdrawModal');
+            showToast(`$${amount.toFixed(2)} platform credit added to your account! (No fees applied)`);
+        }
+
+        // Other functions
+        function viewHistory(goalId) {
+            showToast('Viewing payment history...');
+        }
+
+        function shareGoal(goalId) {
+            showToast('Goal sharing link copied!');
+        }
+
+        function manageJointGoal(goalId) {
+            showToast('Opening joint goal management...');
+        }
+
+        function searchBusinesses() {
+            const query = document.getElementById('searchQuery').value;
+            const location = document.getElementById('searchLocation').value;
+            const radius = document.getElementById('searchRadius').value;
+            showToast(`Searching for "${query || 'all businesses'}" ${radius} near ${location}...`);
+        }
+
+        function viewStore(storeName) {
+            showToast(`Opening ${storeName} storefront...`);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'LANDING.html';
+            }
+        }
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Enter key support for login
         document.addEventListener('DOMContentLoaded', function() {
             ['login-email','login-password'].forEach(function(id) {
-                const el = document.getElementById(id);
+                var el = document.getElementById(id);
                 if (el) el.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') doLogin();
                 });
