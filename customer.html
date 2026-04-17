@@ -340,6 +340,20 @@ function pay(id){
 
 function saveProfile(){const a=document.getElementById('profile-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Profile updated!';setTimeout(()=>a.style.display='none',2000);}
 function sendSupport(){const s=document.getElementById('support-subject').value,m=document.getElementById('support-msg').value;if(!s||!m)return;const a=document.getElementById('support-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Message sent! We respond within 24 hours.';document.getElementById('support-subject').value='';document.getElementById('support-msg').value='';setTimeout(()=>a.style.display='none',3000);}
-</script>
+
+        // Enter key to submit login
+        document.addEventListener('DOMContentLoaded', function() {
+            ['loginEmail','loginPassword'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        // find and click the login/signin button
+                        const btn = document.querySelector('button[onclick*="login"], button[onclick*="Login"], button[onclick*="signin"], button[onclick*="signIn"]');
+                        if (btn) btn.click();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
