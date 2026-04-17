@@ -7,104 +7,94 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; }
-.logo-wrap { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; cursor: pointer; }
-.logo-text { font-size: 1.5rem; font-weight: 800; color: #fff; }
-#login-screen, #register-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0d0d0d; }
-.auth-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px; }
-.auth-logo-wrap { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 0.4rem; }
-.auth-logo-text { font-size: 2rem; font-weight: 800; color: #fff; }
-.auth-sub { text-align: center; color: #6b7280; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; }
-.form-group { margin-bottom: 1rem; }
-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: #d1d5db; }
-input, select, textarea { width: 100%; padding: 0.7rem 1rem; background: #1f1f1f; border: 1.5px solid #333; border-radius: 8px; font-size: 0.95rem; color: #fff; }
-input::placeholder { color: #4b5563; }
-input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
-select option { background: #1f1f1f; }
-.btn { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.95rem; font-weight: 600; width: 100%; margin-top: 0.5rem; }
-.btn-primary { background: #3b82f6; color: white; }
-.btn-primary:hover { background: #2563eb; }
-.btn-sm { width: auto; padding: 0.45rem 1.1rem; font-size: 0.83rem; margin-top: 0; }
-.auth-footer { text-align: center; margin-top: 1.2rem; font-size: 0.85rem; color: #6b7280; }
-.auth-footer a { color: #3b82f6; text-decoration: none; cursor: pointer; }
-.alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.88rem; display: none; }
-.alert-error { background: #1f0a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
-.alert-success { background: #052e16; border: 1px solid #14532d; color: #86efac; }
-#app-screen { display: none; min-height: 100vh; background: #0d0d0d; }
-nav { background: #161616; border-bottom: 1px solid #2a2a2a; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-.nav-right { display: flex; align-items: center; gap: 1rem; }
-.nav-user { color: #6b7280; font-size: 0.9rem; }
-.nav-logout { color: #ef4444; background: none; border: 1px solid #ef4444; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-.nav-logout:hover { background: #ef4444; color: white; }
-.tabs { background: #161616; border-bottom: 1px solid #2a2a2a; display: flex; padding: 0 2rem; overflow-x: auto; }
-.tab { padding: 1rem 1.4rem; cursor: pointer; font-weight: 500; color: #6b7280; border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; font-size: 0.9rem; }
-.tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
-.tab:hover { color: #3b82f6; }
-.container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
-.page { display: none; }
-.page.active { display: block; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
-.stat-card { background: #161616; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.5rem; }
-.stat-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
-.stat-value { font-size: 1.8rem; font-weight: 700; color: #fff; }
-.stat-sub { font-size: 0.8rem; color: #4b5563; margin-top: 0.3rem; }
-.section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #e5e7eb; }
-.card { background: #161616; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
-.goal-card { background: #161616; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
-.goal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-.goal-name { font-weight: 600; color: #f9fafb; }
-.goal-merchant { font-size: 0.8rem; color: #6b7280; margin-top: 0.2rem; }
-.goal-current { font-size: 1.4rem; font-weight: 700; color: #10b981; }
-.goal-target { font-size: 0.8rem; color: #4b5563; }
-.progress-bar { background: #1f2937; border-radius: 99px; height: 8px; overflow: hidden; margin-bottom: 0.5rem; }
-.progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3b82f6, #10b981); transition: width 0.5s; }
-.progress-pct { font-size: 0.8rem; color: #6b7280; }
-.goal-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
-.btn-action { padding: 0.45rem 1.1rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.83rem; font-weight: 500; }
-.btn-green { background: #10b981; color: white; }
-.btn-green:hover { background: #059669; }
-.btn-dark { background: #1f2937; color: #d1d5db; border: 1px solid #374151; }
-.btn-dark:hover { background: #374151; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-th { background: #1a1a1a; text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; }
-td { padding: 0.9rem 1rem; border-top: 1px solid #1f2937; font-size: 0.88rem; color: #d1d5db; }
-tr:hover td { background: #1a1a1a; }
-.badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 99px; font-size: 0.73rem; font-weight: 500; }
-.badge-green { background: #052e16; color: #86efac; border: 1px solid #166534; }
-.empty-state { text-align: center; padding: 3rem; color: #4b5563; }
-.empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
-@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } nav { padding: 1rem; } .container { padding: 0 1rem; } }
+.logo-wrap { display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
+.logo-text { font-size:1.5rem; font-weight:800; color:#fff; }
+#login-screen, #register-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0d0d0d; }
+#register-screen { display:none; }
+.auth-box { background:#161616; border:1px solid #2a2a2a; border-radius:16px; padding:2.5rem; width:100%; max-width:420px; }
+.auth-logo-wrap { display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:0.4rem; }
+.auth-logo-text { font-size:2rem; font-weight:800; color:#fff; }
+.auth-sub { text-align:center; color:#6b7280; font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:2rem; }
+.form-group { margin-bottom:1rem; }
+label { display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:#d1d5db; }
+input, select, textarea { width:100%; padding:0.7rem 1rem; background:#1f1f1f; border:1.5px solid #333; border-radius:8px; font-size:0.95rem; color:#fff; }
+input::placeholder { color:#4b5563; }
+input:focus, select:focus, textarea:focus { outline:none; border-color:#3b82f6; }
+select option { background:#1f1f1f; }
+.btn { padding:0.75rem 1.5rem; border-radius:8px; border:none; cursor:pointer; font-size:0.95rem; font-weight:600; width:100%; margin-top:0.5rem; background:#3b82f6; color:white; }
+.btn:hover { background:#2563eb; }
+.auth-footer { text-align:center; margin-top:1.2rem; font-size:0.85rem; color:#6b7280; }
+.auth-footer a { color:#3b82f6; text-decoration:none; cursor:pointer; }
+.alert { padding:0.8rem 1rem; border-radius:8px; margin-bottom:1rem; font-size:0.88rem; display:none; }
+.alert-error { background:#1f0a0a; border:1px solid #7f1d1d; color:#fca5a5; }
+.alert-success { background:#052e16; border:1px solid #14532d; color:#86efac; }
+#app-screen { display:none; min-height:100vh; background:#0d0d0d; }
+nav { background:#161616; border-bottom:1px solid #2a2a2a; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; }
+.nav-right { display:flex; align-items:center; gap:1rem; }
+.nav-user { color:#6b7280; font-size:0.9rem; }
+.nav-logout { color:#ef4444; background:none; border:1px solid #ef4444; padding:0.4rem 1rem; border-radius:6px; cursor:pointer; font-size:0.85rem; }
+.nav-logout:hover { background:#ef4444; color:white; }
+.tabs { background:#161616; border-bottom:1px solid #2a2a2a; display:flex; padding:0 2rem; overflow-x:auto; }
+.tab { padding:1rem 1.4rem; cursor:pointer; font-weight:500; color:#6b7280; border-bottom:3px solid transparent; margin-bottom:-1px; white-space:nowrap; font-size:0.9rem; }
+.tab.active { color:#3b82f6; border-bottom-color:#3b82f6; }
+.tab:hover { color:#3b82f6; }
+.container { max-width:1100px; margin:2rem auto; padding:0 1.5rem; }
+.page { display:none; }
+.page.active { display:block; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+.stat-card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; }
+.stat-label { font-size:0.75rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem; }
+.stat-value { font-size:1.8rem; font-weight:700; color:#fff; }
+.stat-sub { font-size:0.8rem; color:#4b5563; margin-top:0.3rem; }
+.section-title { font-size:1.1rem; font-weight:600; margin-bottom:1rem; color:#e5e7eb; }
+.card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
+.goal-card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; padding:1.5rem; margin-bottom:1rem; }
+.goal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; }
+.goal-name { font-weight:600; color:#f9fafb; }
+.goal-merchant { font-size:0.8rem; color:#6b7280; margin-top:0.2rem; }
+.goal-current { font-size:1.4rem; font-weight:700; color:#10b981; }
+.goal-target { font-size:0.8rem; color:#4b5563; }
+.progress-bar { background:#1f2937; border-radius:99px; height:8px; overflow:hidden; margin-bottom:0.5rem; }
+.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#3b82f6,#10b981); transition:width 0.5s; }
+.progress-pct { font-size:0.8rem; color:#6b7280; }
+.goal-actions { display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap; }
+.btn-action { padding:0.45rem 1.1rem; border-radius:8px; border:none; cursor:pointer; font-size:0.83rem; font-weight:500; }
+.btn-green { background:#10b981; color:white; }
+.btn-green:hover { background:#059669; }
+.btn-dark { background:#1f2937; color:#d1d5db; border:1px solid #374151; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+th { background:#1a1a1a; text-align:left; padding:0.75rem 1rem; font-size:0.75rem; text-transform:uppercase; color:#6b7280; }
+td { padding:0.9rem 1rem; border-top:1px solid #1f2937; font-size:0.88rem; color:#d1d5db; }
+tr:hover td { background:#1a1a1a; }
+.badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:99px; font-size:0.73rem; font-weight:500; }
+.badge-green { background:#052e16; color:#86efac; border:1px solid #166534; }
+.empty-state { text-align:center; padding:3rem; color:#4b5563; }
+.empty-state .icon { font-size:3rem; margin-bottom:1rem; }
+@media(max-width:600px){ .form-row{grid-template-columns:1fr;} nav{padding:1rem;} .container{padding:0 1rem;} }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="auth-box">
-    <div class="auth-logo-wrap">
-      <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="4" width="30" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="14" width="22" height="4" rx="2" fill="#3b82f6"/><circle cx="30" cy="16" r="5" fill="#f59e0b"/><rect x="0" y="24" width="30" height="4" rx="2" fill="#3b82f6"/></svg>
-      <div class="auth-logo-text">PrePae</div>
-    </div>
+    <div class="auth-logo-wrap"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="auth-logo-text">PrePae</div></div>
     <div class="auth-sub">Customer Portal</div>
     <div id="login-alert" class="alert alert-error"></div>
     <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="you@email.com"></div>
     <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="Password"></div>
-    <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+    <button class="btn" onclick="doLogin()">Sign In</button>
     <div class="auth-footer">
       <a href="index.html">&larr; Back to home</a> &nbsp;&bull;&nbsp;
-      New customer? <a onclick="showRegister()">Create account</a>
+      New customer? <a id="create-acct-link" onclick="showRegister()">Create account</a>
     </div>
   </div>
 </div>
 
-<!-- REGISTER -->
-<div id="register-screen" style="display:none;">
+<div id="register-screen">
   <div class="auth-box">
-    <div class="auth-logo-wrap">
-      <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="4" width="30" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="14" width="22" height="4" rx="2" fill="#3b82f6"/><circle cx="30" cy="16" r="5" fill="#f59e0b"/><rect x="0" y="24" width="30" height="4" rx="2" fill="#3b82f6"/></svg>
-      <div class="auth-logo-text">PrePae</div>
-    </div>
+    <div class="auth-logo-wrap"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="auth-logo-text">PrePae</div></div>
     <div class="auth-sub">Create Account</div>
     <div id="reg-alert" class="alert alert-error"></div>
     <div class="form-row">
@@ -114,15 +104,14 @@ tr:hover td { background: #1a1a1a; }
     <div class="form-group"><label>Email Address</label><input type="email" id="reg-email" placeholder="you@email.com"></div>
     <div class="form-group"><label>Password</label><input type="password" id="reg-password" placeholder="Create a password"></div>
     <div class="form-group"><label>Confirm Password</label><input type="password" id="reg-confirm" placeholder="Confirm password"></div>
-    <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
+    <button class="btn" onclick="doRegister()">Create Account</button>
     <div class="auth-footer">Already have an account? <a onclick="showLogin()">Sign in</a></div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app-screen">
   <nav>
-    <a class="logo-wrap" href="index.html"><svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="4" width="30" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="14" width="22" height="4" rx="2" fill="#3b82f6"/><circle cx="30" cy="16" r="5" fill="#f59e0b"/><rect x="0" y="24" width="30" height="4" rx="2" fill="#3b82f6"/></svg><div class="logo-text">PrePae</div></a>
+    <a class="logo-wrap" href="index.html"><svg width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="3" width="28" height="4" rx="2" fill="#3b82f6"/><rect x="0" y="13" width="20" height="4" rx="2" fill="#3b82f6"/><circle cx="28" cy="15" r="5" fill="#f59e0b"/><rect x="0" y="23" width="28" height="4" rx="2" fill="#3b82f6"/></svg><div class="logo-text">PrePae</div></a>
     <div class="nav-right">
       <span class="nav-user" id="nav-username"></span>
       <button class="nav-logout" onclick="doLogout()">Sign Out</button>
@@ -136,7 +125,6 @@ tr:hover td { background: #1a1a1a; }
     <div class="tab" onclick="showTab('support',this)">Support</div>
   </div>
   <div class="container">
-
     <div id="page-dashboard" class="page active">
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Total Saved</div><div class="stat-value" id="stat-saved">$0.00</div><div class="stat-sub">Across all goals</div></div>
@@ -149,7 +137,6 @@ tr:hover td { background: #1a1a1a; }
       <div class="section-title" style="margin-top:2rem;">Recent Payments</div>
       <div class="card"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Goal</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recent-pay-table"><tr><td colspan="4" style="text-align:center;color:#4b5563;padding:2rem;">No payments yet.</td></tr></tbody></table></div></div>
     </div>
-
     <div id="page-goals" class="page">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
         <div class="section-title" style="margin:0;">My Layaway Goals</div>
@@ -174,12 +161,10 @@ tr:hover td { background: #1a1a1a; }
       </div>
       <div id="goals-list"></div>
     </div>
-
     <div id="page-payments" class="page">
       <div class="section-title">Payment History</div>
       <div class="card"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Goal</th><th>Amount</th><th>Fee</th><th>Net</th><th>Status</th></tr></thead><tbody id="payments-table"><tr><td colspan="6" style="text-align:center;color:#4b5563;padding:2rem;">No payments yet.</td></tr></tbody></table></div></div>
     </div>
-
     <div id="page-profile" class="page">
       <div class="section-title">My Profile</div>
       <div class="card">
@@ -196,7 +181,6 @@ tr:hover td { background: #1a1a1a; }
         <button class="btn-action btn-green" style="margin-top:0.5rem;" onclick="saveProfile()">Save Changes</button>
       </div>
     </div>
-
     <div id="page-support" class="page">
       <div class="section-title">Contact Support</div>
       <div class="card">
@@ -207,16 +191,20 @@ tr:hover td { background: #1a1a1a; }
         <button class="btn-action btn-green" style="margin-top:0.5rem;" onclick="sendSupport()">Send Message</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
 let goals=[], payments=[];
 
-function showLogin(){document.getElementById('register-screen').style.display='none';document.getElementById('login-screen').style.display='flex';}
-function showRegister(){document.getElementById('login-screen').style.display='none';document.getElementById('register-screen').style.display='flex';}
-
+function showLogin(){
+  document.getElementById('register-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+function showRegister(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('register-screen').style.display='flex';
+}
 function doLogin(){
   const e=document.getElementById('login-email').value,p=document.getElementById('login-password').value,a=document.getElementById('login-alert');
   if(!e||!p){a.style.display='block';a.textContent='Please enter email and password.';return;}
@@ -227,7 +215,6 @@ function doLogin(){
   document.getElementById('app-screen').style.display='block';
   renderDashboard();
 }
-
 function doRegister(){
   const first=document.getElementById('reg-first').value,last=document.getElementById('reg-last').value,email=document.getElementById('reg-email').value,pass=document.getElementById('reg-password').value,conf=document.getElementById('reg-confirm').value,a=document.getElementById('reg-alert');
   if(!first||!last||!email||!pass){a.style.display='block';a.textContent='Please fill in all fields.';return;}
@@ -240,37 +227,40 @@ function doRegister(){
   document.getElementById('app-screen').style.display='block';
   renderDashboard();
 }
-
-function doLogout(){document.getElementById('app-screen').style.display='none';goals=[];payments=[];document.getElementById('login-screen').style.display='flex';}
-
-function showTab(n,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');el.classList.add('active');if(n==='goals')renderGoals();if(n==='payments')renderPayments();}
-
+function doLogout(){
+  document.getElementById('app-screen').style.display='none';
+  goals=[];payments=[];
+  document.getElementById('login-screen').style.display='flex';
+}
+function showTab(n,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  el.classList.add('active');
+  if(n==='goals')renderGoals();
+  if(n==='payments')renderPayments();
+}
 function goalCard(g){const p=Math.min(100,Math.round(g.current/g.target*100));return '<div class="goal-card"><div class="goal-header"><div><div class="goal-name">'+g.name+'</div><div class="goal-merchant">'+g.merchant+(g.product?' &mdash; '+g.product:'')+'</div></div><div style="text-align:right"><div class="goal-current">$'+g.current.toFixed(2)+'</div><div class="goal-target">of $'+g.target.toFixed(2)+'</div></div></div><div class="progress-bar"><div class="progress-fill" style="width:'+p+'%"></div></div><div class="progress-pct">'+p+'% complete</div><div class="goal-actions"><button class="btn-action btn-green" onclick="pay('+g.id+')">Make Payment</button><button class="btn-action btn-dark">Details</button></div></div>';}
-
 function renderDashboard(){
-  const total=goals.reduce((s,g)=>s+g.current,0);
-  document.getElementById('stat-saved').textContent='$'+total.toFixed(2);
-  document.getElementById('stat-goals').textContent=goals.length;
+  document.getElementById('stat-saved').textContent='$'+goals.reduce((s,g)=>s+g.current,0).toFixed(2);
+  document.getElementById('stat-goals').textContent=goals.filter(g=>g.current<g.target).length;
   document.getElementById('stat-next').textContent=goals.length?'$'+(goals[0].autopay||0).toFixed(2):'—';
   document.getElementById('stat-completed').textContent=goals.filter(g=>g.current>=g.target).length;
   const dg=document.getElementById('dashboard-goals');
-  dg.innerHTML=goals.length?goals.filter(g=>g.current<g.target).map(goalCard).join(''):'<div class="empty-state"><div class="icon">🎯</div><p>No active goals. <a onclick="document.querySelectorAll('.tab')[1].click()" style="color:#3b82f6;cursor:pointer;">Create your first goal</a></p></div>';
-  const rp=document.getElementById('recent-pay-table');
-  rp.innerHTML=payments.length?payments.slice(0,5).map(p=>'<tr><td>'+p.date+'</td><td>'+p.goal+'</td><td>'+p.amount+'</td><td><span class="badge badge-green">Completed</span></td></tr>').join(''):'<tr><td colspan="4" style="text-align:center;color:#4b5563;padding:2rem;">No payments yet.</td></tr>';
+  dg.innerHTML=goals.filter(g=>g.current<g.target).map(goalCard).join('')||'<div class="empty-state"><div class="icon">🎯</div><p>No active goals yet.</p></div>';
+  document.getElementById('recent-pay-table').innerHTML=payments.length?payments.slice(0,5).map(p=>'<tr><td>'+p.date+'</td><td>'+p.goal+'</td><td>'+p.amount+'</td><td><span class="badge badge-green">Completed</span></td></tr>').join(''):'<tr><td colspan="4" style="text-align:center;color:#4b5563;padding:2rem;">No payments yet.</td></tr>';
 }
 function renderGoals(){document.getElementById('goals-list').innerHTML=goals.length?goals.map(goalCard).join(''):'<div class="empty-state"><div class="icon">🎯</div><p>No goals yet. Click &ldquo;+ New Goal&rdquo; to get started.</p></div>';}
 function renderPayments(){document.getElementById('payments-table').innerHTML=payments.length?payments.map(p=>'<tr><td>'+p.date+'</td><td>'+p.goal+'</td><td>'+p.amount+'</td><td>'+p.fee+'</td><td>'+p.net+'</td><td><span class="badge badge-green">Completed</span></td></tr>').join(''):'<tr><td colspan="6" style="text-align:center;color:#4b5563;padding:2rem;">No payments yet.</td></tr>';}
-
 function createGoal(){
   const n=document.getElementById('goal-name').value,t=parseFloat(document.getElementById('goal-target').value),m=document.getElementById('goal-merchant').value,pr=document.getElementById('goal-product').value,a=parseFloat(document.getElementById('goal-autopay').value)||0,al=document.getElementById('goal-alert');
   if(!n||!t||m==='Select merchant...'){al.className='alert alert-error';al.style.display='block';al.textContent='Please fill in all required fields.';return;}
   goals.push({id:Date.now(),name:n,merchant:m,product:pr,target:t,current:0,autopay:a});
-  al.className='alert alert-success';al.style.display='block';al.textContent='Goal created successfully!';
-  document.getElementById('goal-name').value='';document.getElementById('goal-target').value='';document.getElementById('goal-autopay').value='';document.getElementById('goal-product').value='';document.getElementById('goal-merchant').value='Select merchant...';
+  al.className='alert alert-success';al.style.display='block';al.textContent='Goal created!';
+  document.getElementById('goal-name').value='';document.getElementById('goal-target').value='';document.getElementById('goal-autopay').value='';document.getElementById('goal-product').value='';document.getElementById('goal-merchant').selectedIndex=0;
   renderGoals();renderDashboard();
   setTimeout(()=>{document.getElementById('new-goal-form').style.display='none';al.style.display='none';},1500);
 }
-
 function pay(id){
   const amt=prompt('Enter payment amount ($):');
   if(!amt||isNaN(amt)||parseFloat(amt)<=0)return;
@@ -280,8 +270,7 @@ function pay(id){
   payments.unshift({date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),goal:g.name,amount:'$'+parseFloat(amt).toFixed(2),fee:'$1.50',net:'$'+net.toFixed(2)});
   renderDashboard();renderGoals();
 }
-
-function saveProfile(){const a=document.getElementById('profile-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Profile updated successfully!';setTimeout(()=>a.style.display='none',2000);}
+function saveProfile(){const a=document.getElementById('profile-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Profile updated!';setTimeout(()=>a.style.display='none',2000);}
 function sendSupport(){const s=document.getElementById('support-subject').value,m=document.getElementById('support-msg').value;if(!s||!m)return;const a=document.getElementById('support-alert');a.className='alert alert-success';a.style.display='block';a.textContent='Message sent! We respond within 24 hours.';document.getElementById('support-subject').value='';document.getElementById('support-msg').value='';setTimeout(()=>a.style.display='none',3000);}
 </script>
 </body>
