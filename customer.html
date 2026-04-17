@@ -343,7 +343,7 @@ function sendSupport(){const s=document.getElementById('support-subject').value,
 
         // Enter key to submit login
         document.addEventListener('DOMContentLoaded', function() {
-            ['loginEmail','loginPassword'].forEach(function(id) {
+            ['login-email','login-password'].forEach(function(id) {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') doLogin();
