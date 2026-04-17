@@ -1,52 +1,71 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PrePae - Prepare. Pay. Achieve.</title>
-  <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:#000;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
-.container{max-width:900px;width:100%;padding:3rem;text-align:center}
-h1{font-size:3rem;font-weight:700;margin-bottom:1rem}
-h1 span{color:#3b82f6}
-p{color:#9ca3af;font-size:1.2rem;margin-bottom:2rem}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
-.card{background:#111;border:2px solid #333;border-radius:12px;padding:3rem 2rem;cursor:pointer;transition:all 0.3s}
-.card:hover{border-color:#3b82f6;transform:translateY(-4px)}
-.card h2{font-size:1.5rem;margin-bottom:1rem}
-.card p{font-size:0.9rem}
-  .api-status{background:#111;border:1px solid #333;border-radius:8px;padding:1rem;margin-top:2rem;font-size:0.85rem}
-#status{color:#9ca3af}
-  </style>
-  </head>
-  <body>
-  <div class="container">
-    <h1>Pre<span>Pae</span></h1>
-    <p>Prepare. Pay. Achieve. — The layaway platform for everyone.</p>
-    <div class="cards">
-      <div class="card" onclick="window.location.href='customer.html'">
-        <h2>Customer Portal</h2>
-        <p>Create layaway goals, make payments, and track your progress toward the things you want.</p>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrePae - Prepare. Pay. Achieve.</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.container { max-width: 900px; width: 100%; padding: 3rem 2rem; text-align: center; }
+.logo-wrap { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.logo-icon { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.logo-icon span { display: block; height: 3px; border-radius: 2px; background: #3b82f6; }
+.logo-icon span:nth-child(1) { width: 22px; }
+.logo-icon span:nth-child(2) { width: 16px; position: relative; }
+.logo-icon span:nth-child(2)::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; }
+.logo-icon span:nth-child(3) { width: 22px; }
+.logo-text { font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+.logo-sub { font-size: 0.7rem; color: #3b82f6; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; margin-bottom: 2.5rem; }
+.tagline { color: #6b7280; font-size: 1rem; margin-bottom: 2.5rem; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+.card { background: #111; border: 2px solid #222; border-radius: 16px; padding: 2.5rem 2rem; cursor: pointer; transition: all 0.3s; text-decoration: none; color: #fff; }
+.card:hover { border-color: #10b981; transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16,185,129,0.15); }
+.card-icon { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; }
+.card-icon-inner { width: 20px; height: 20px; border-radius: 50%; background: #10b981; }
+.card-icon-sq { width: 20px; height: 20px; border: 3px solid #10b981; border-radius: 2px; }
+.card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+.card p { color: #9ca3af; font-size: 0.88rem; line-height: 1.6; }
+.api-status { background: #111; border: 1px solid #222; border-radius: 8px; padding: 0.9rem; font-size: 0.8rem; color: #6b7280; }
+@media (max-width: 600px) { .cards { grid-template-columns: 1fr; } .logo-text { font-size: 1.8rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo-text">PrePae</div>
+  </div>
+  <div class="logo-sub">PREPARE. PAY. ACHIEVE.</div>
+  <div class="tagline">The layaway platform for everyone.</div>
+  <div class="cards">
+    <div class="card" onclick="window.location.href='customer.html'">
+      <div class="card-icon"><div class="card-icon-inner"></div></div>
+      <h2>I'm a Customer</h2>
+      <p>Save for products with flexible payments.<br>No credit checks. No forced schedules.<br>Pay whenever you have money.</p>
     </div>
     <div class="card" onclick="window.location.href='merchant.html'">
-      <h2>Merchant Portal</h2>
-        <p>List your products, manage layaway orders, and grow your business with PrePae.</p>
-      </div>
-    </div>
-    <div class="api-status">
-      API Status: <span id="status">Checking...</span>
+      <div class="card-icon"><div class="card-icon-sq"></div></div>
+      <h2>I'm a Merchant</h2>
+      <p>Accept layaway payments.<br>Get paid when customers complete.<br>Year 1 FREE advertising included.</p>
     </div>
   </div>
-  <script>
-  const API = 'https://prepae-backend.onrender.com';
-fetch(API).then(r=>r.json()).then(d=>{
-    document.getElementById('status').textContent = d.status + ' v' + d.version;
-  document.getElementById('status').style.color = '#10b981';
+  <div class="api-status">API Status: <span id="status">Checking...</span></div>
+</div>
+<script>
+fetch('https://prepae-backend.onrender.com').then(r=>r.json()).then(d=>{
+  const s=document.getElementById('status');
+  s.textContent=d.status+' v'+d.version;
+  s.style.color='#10b981';
 }).catch(()=>{
-    document.getElementById('status').textContent = 'Offline';
-  document.getElementById('status').style.color = '#ef4444';
+  const s=document.getElementById('status');
+  s.textContent='Offline';
+  s.style.color='#ef4444';
 });
 </script>
-  </body>
-  </html>
+</body>
+</html>
