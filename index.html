@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrePae - Prepare. Pay. Achieve.</title>
+  <style>
+  *{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#000;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{max-width:900px;width:100%;padding:3rem;text-align:center}
+h1{font-size:3rem;font-weight:700;margin-bottom:1rem}
+h1 span{color:#3b82f6}
+p{color:#9ca3af;font-size:1.2rem;margin-bottom:2rem}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
+.card{background:#111;border:2px solid #333;border-radius:12px;padding:3rem 2rem;cursor:pointer;transition:all 0.3s}
+.card:hover{border-color:#3b82f6;transform:translateY(-4px)}
+.card h2{font-size:1.5rem;margin-bottom:1rem}
+.card p{font-size:0.9rem}
+  .api-status{background:#111;border:1px solid #333;border-radius:8px;padding:1rem;margin-top:2rem;font-size:0.85rem}
+#status{color:#9ca3af}
+  </style>
+  </head>
+  <body>
+  <div class="container">
+    <h1>Pre<span>Pae</span></h1>
+    <p>Prepare. Pay. Achieve. — The layaway platform for everyone.</p>
+    <div class="cards">
+      <div class="card" onclick="window.location.href='customer.html'">
+        <h2>Customer Portal</h2>
+        <p>Create layaway goals, make payments, and track your progress toward the things you want.</p>
+    </div>
+    <div class="card" onclick="window.location.href='merchant.html'">
+      <h2>Merchant Portal</h2>
+        <p>List your products, manage layaway orders, and grow your business with PrePae.</p>
+      </div>
+    </div>
+    <div class="api-status">
+      API Status: <span id="status">Checking...</span>
+    </div>
+  </div>
+  <script>
+  const API = 'https://prepae-backend.onrender.com';
+fetch(API).then(r=>r.json()).then(d=>{
+    document.getElementById('status').textContent = d.status + ' v' + d.version;
+  document.getElementById('status').style.color = '#10b981';
+}).catch(()=>{
+    document.getElementById('status').textContent = 'Offline';
+  document.getElementById('status').style.color = '#ef4444';
+});
+</script>
+  </body>
+  </html>
