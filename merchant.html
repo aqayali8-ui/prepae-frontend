@@ -24,8 +24,8 @@
         .btn { padding: 0.7rem 1.5rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.95rem; }
         .btn-primary { background: #3b82f6; color: white; }
         .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
-        .btn-secondary { background: #1f2937; color: #e5e7eb; }
-        .btn-secondary:hover { background: #374151; }
+        .btn-secondary { background: #e2e8f0; color: #2d3748; }
+        .btn-secondary:hover { background: #cbd5e0; }
         .btn-success { background: #3b82f6; color: white; }
         .btn-danger { background: #ef4444; color: white; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
@@ -182,7 +182,7 @@
             <div id="applicationForm" style="display: none; margin-top: 3rem;">
                 <h2 style="font-size: 1.6rem; margin-bottom: 1rem;">Complete Your Application</h2>
                 
-                <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     <div class="success-box">
                         Selected Plan: <strong id="selectedPlan">-</strong> at <strong id="selectedPrice">$-</strong>/month<br>
                         <span style="color: #3b82f6; font-weight: 600;">✓ Year 1 Free Advertising Included</span>
@@ -246,7 +246,7 @@
                         </div>
                     </div>
 
-                    <h3 style="font-size: 1.3rem; margin: 2rem 0 1rem; color: #f1f5f9;">Product Upload Service (Optional)</h3>
+                    <h3 style="font-size: 1.3rem; margin: 2rem 0 1rem; color: #1a202c;">Product Upload Service (Optional)</h3>
                     
                     <div class="form-group">
                         <label>How many products do you need uploaded?</label>
@@ -266,7 +266,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                                 <div>
                                     <strong>Pay Upfront - SAVE 10%</strong>
-                                    <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                    <div style="font-size: 0.9rem; color: #718096; margin-top: 0.3rem;">
                                         $<span id="upfrontPrice">224</span> one-time (save $<span id="upfrontSavings">25</span>)
                                     </div>
                                 </div>
@@ -277,12 +277,12 @@
                         <div class="payment-option" onclick="selectUploadPayment('split')">
                             <div>
                                 <strong>Split Payment: 50% Now + Spread Remainder</strong>
-                                <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                <div style="font-size: 0.9rem; color: #718096; margin-top: 0.3rem;">
                                     $<span id="splitUpfront">125</span> upfront + remainder over subscription
                                 </div>
                                 <div style="margin-top: 1rem;">
                                     <label style="font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Payoff duration:</label>
-                                    <select id="splitDuration" style="width: 100%; padding: 0.7rem; border: 1px solid #1f2937; border-radius: 6px;" onchange="updateSplitCalc()">
+                                    <select id="splitDuration" style="width: 100%; padding: 0.7rem; border: 1px solid #cbd5e0; border-radius: 6px;" onchange="updateSplitCalc()">
                                         <option value="3">3 months (+$42/mo)</option>
                                         <option value="6" selected>6 months (+$21/mo) - Recommended</option>
                                         <option value="12">12 months (+$10/mo) - Easiest</option>
@@ -294,7 +294,7 @@
                         <div class="payment-option" onclick="selectUploadPayment('perproduct')">
                             <div>
                                 <strong>Pay Per Product</strong>
-                                <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                <div style="font-size: 0.9rem; color: #718096; margin-top: 0.3rem;">
                                     $4.99 per product (no commitment, add more anytime)
                                 </div>
                             </div>
@@ -390,7 +390,7 @@
             <h1>Add Product</h1>
             <p class="subtitle">Add products for layaway or instant pickup</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 
                 <div class="form-group">
                     <label>Product Image *</label>
@@ -398,7 +398,7 @@
                         <div id="uploadPrompt">
                             <div style="font-size: 3rem; margin-bottom: 0.5rem;">📸</div>
                             <div style="font-weight: 600; margin-bottom: 0.3rem;">Click to upload product image</div>
-                            <div style="font-size: 0.9rem; color: #9ca3af;">JPG, PNG, or WEBP (max 5MB)</div>
+                            <div style="font-size: 0.9rem; color: #718096;">JPG, PNG, or WEBP (max 5MB)</div>
                         </div>
                         <img id="imagePreview" class="image-preview" style="display: none;">
                     </div>
@@ -455,7 +455,7 @@
             <h1>Advertising Tools <span class="badge-free" style="margin-left: 1rem;">YEAR 1 FREE</span></h1>
             <p class="subtitle">Promote your products and reach more customers</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 
                 <div class="ad-tools-grid">
                     <button class="btn btn-primary" onclick="runPromotion()">📢 Run Promotion</button>
@@ -498,7 +498,7 @@
             <h1>Contact Support</h1>
             <p class="subtitle">Send a message to platform support</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5); max-width: 800px;">
+            <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-width: 800px;">
                 <div class="form-group">
                     <label>Subject *</label>
                     <input type="text" id="supportSubject" placeholder="Brief description of your issue">
