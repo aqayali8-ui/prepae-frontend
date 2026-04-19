@@ -47,8 +47,8 @@
         .badge-free { display: inline-block; background: #3b82f6; color: white; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0; }
         .badge-forever { background: #3b82f6; }
         .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.95rem; background: #0a0a0a; color: #fff; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #e5e7eb; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #3b82f6; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.95rem; background: #1a1a2e; color: #fff; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
         .form-hint { font-size: 0.85rem; color: #9ca3af; margin-top: 0.5rem; }
@@ -173,7 +173,7 @@
             <div id="applicationForm" style="display: none; margin-top: 3rem;">
                 <h2 style="font-size: 1.6rem; margin-bottom: 1rem;">Complete Your Application</h2>
                 
-                <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                <div style="background: #1a1a2e; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
                     <div class="success-box">
                         Selected Plan: <strong id="selectedPlan">-</strong> at <strong id="selectedPrice">$-</strong>/month<br>
                         <span style="color: #3b82f6; font-weight: 600;">✓ Year 1 Free Advertising Included</span>
@@ -381,15 +381,30 @@
             <h1>Add Product</h1>
             <p class="subtitle">Add products for layaway or instant pickup</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="background: #1a1a2e; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
                 
                 <div class="form-group">
                     <label>Product Image *</label>
                     <div class="image-upload-container" id="imageUploadContainer" onclick="document.getElementById('productImage').click()">
                         <div id="uploadPrompt">
-                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📸</div>
-                            <div style="font-weight: 600; margin-bottom: 0.3rem;">Click to upload product image</div>
-                            <div style="font-size: 0.9rem; color: #718096;">JPG, PNG, or WEBP (max 5MB)</div>
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:12px;">
+                              <!-- Camera body -->
+                              <rect x="8" y="18" width="48" height="34" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                              <!-- Lens outer -->
+                              <circle cx="32" cy="35" r="11" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+                              <!-- Lens inner -->
+                              <circle cx="32" cy="35" r="7" fill="#1e3a5f" stroke="#60a5fa" stroke-width="1.5"/>
+                              <!-- Lens center -->
+                              <circle cx="32" cy="35" r="3" fill="#3b82f6"/>
+                              <!-- Viewfinder bump -->
+                              <rect x="22" y="12" width="12" height="8" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                              <!-- Flash -->
+                              <rect x="42" y="22" width="8" height="5" rx="2" fill="#f59e0b"/>
+                              <!-- Upload arrow -->
+                              <path d="M32 8 L32 2 M29 5 L32 2 L35 5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div style="font-weight: 600; margin-bottom: 0.3rem; color:#e5e7eb;">Click to upload product image</div>
+                            <div style="font-size: 0.9rem; color: #9ca3af;">JPG, PNG, or WEBP (max 5MB)</div>
                         </div>
                         <img id="imagePreview" class="image-preview" style="display: none;">
                     </div>
@@ -446,7 +461,7 @@
             <h1>Advertising Tools <span class="badge-free" style="margin-left: 1rem;">YEAR 1 FREE</span></h1>
             <p class="subtitle">Promote your products and reach more customers</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="background: #1a1a2e; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
                 
                 <div class="ad-tools-grid">
                     <button class="btn btn-primary" onclick="runPromotion()">📢 Run Promotion</button>
@@ -489,7 +504,7 @@
             <h1>Contact Support</h1>
             <p class="subtitle">Send a message to platform support</p>
 
-            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5); max-width: 800px;">
+            <div style="background: #1a1a2e; padding: 2rem; border-radius: 12px; border: 1px solid #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.5); max-width: 800px;">
                 <div class="form-group">
                     <label>Subject *</label>
                     <input type="text" id="supportSubject" placeholder="Brief description of your issue">
