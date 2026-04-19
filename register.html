@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrePae - Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:#0a0a0a; color:#e5e7eb; min-height:100vh; display:flex; flex-direction:column; }
+.header { background:#1a1a1a; border-bottom:1px solid #333; padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+.back-btn { background:none; border:1px solid #374151; color:#9ca3af; padding:0.4rem 1rem; border-radius:6px; cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:none; }
+.back-btn:hover { color:#fff; border-color:#3b82f6; }
+.main { flex:1; display:flex; align-items:center; justify-content:center; padding:2rem; }
+.card { background:#1a1a1a; border:1px solid #333; border-radius:16px; padding:2.5rem; width:100%; max-width:520px; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+.card-title { font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:0.4rem; }
+.card-sub { color:#9ca3af; font-size:0.9rem; margin-bottom:2rem; }
+.form-group { margin-bottom:1.2rem; }
+label { display:block; font-size:0.85rem; font-weight:600; color:#9ca3af; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.5px; }
+input, select { width:100%; background:#0f0f13; border:1px solid #3b82f6; border-radius:8px; color:#fff; padding:0.85rem 1rem; font-size:0.95rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+input:focus, select:focus { border-color:#60a5fa; box-shadow:0 0 0 3px rgba(59,130,246,0.15); }
+select option { background:#1a1a1a; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.divider { border:none; border-top:1px solid #333; margin:1.5rem 0; }
+.section-label { font-size:0.75rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; }
+.btn { width:100%; background:#3b82f6; color:#fff; border:none; border-radius:8px; padding:1rem; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:0.5rem; }
+.btn:hover { background:#2563eb; transform:translateY(-1px); box-shadow:0 4px 16px rgba(59,130,246,0.4); }
+.info-box { background:rgba(59,130,246,0.1); border-left:3px solid #3b82f6; border-radius:6px; padding:0.8rem 1rem; font-size:0.85rem; color:#93c5fd; margin-bottom:1.5rem; }
+/* SUCCESS STATE */
+.success-screen { display:none; text-align:center; padding:1rem 0; }
+.acct-num-box { background:linear-gradient(135deg,#1e3a5f,#1a1a2e); border:2px solid #3b82f6; border-radius:12px; padding:1.5rem; margin:1.5rem 0; }
+.acct-num-label { font-size:0.75rem; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+.acct-num { font-size:2rem; font-weight:800; color:#3b82f6; letter-spacing:4px; font-family:monospace; }
+.acct-copy { background:none; border:1px solid #3b82f6; color:#3b82f6; padding:0.4rem 1rem; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600; margin-top:0.8rem; }
+.acct-copy:hover { background:#3b82f6; color:#fff; }
+.check-circle { width:64px; height:64px; background:rgba(59,130,246,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; }
+.portal-btn { display:inline-block; background:#3b82f6; color:#fff; border:none; border-radius:8px; padding:0.85rem 2rem; font-size:0.95rem; font-weight:700; cursor:pointer; text-decoration:none; margin-top:1rem; transition:all 0.2s; }
+.portal-btn:hover { background:#2563eb; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="back-btn">← Back to Home</a>
+  <svg width="200" height="50" viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="20" width="15" height="3" rx="1.5" fill="#3b82f6" opacity="0.4"/>
+    <rect x="10" y="27" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
+    <rect x="10" y="34" width="30" height="3" rx="1.5" fill="url(#gReg)"/>
+    <circle cx="42" cy="35.5" r="4.5" fill="#f59e0b"/>
+    <path d="M 40.5 35.5 L 42 37 L 44 34" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <defs><linearGradient id="gReg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#3b82f6"/><stop offset="100%" style="stop-color:#f59e0b"/></linearGradient></defs>
+    <text x="52" y="33" font-family="Inter,sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">PrePae</text>
+    <text x="53" y="44" font-family="Inter,sans-serif" font-size="6" font-weight="600" fill="#3b82f6" letter-spacing="1">PREPARE. PAY. ACHIEVE.</text>
+  </svg>
+  <div style="width:100px"></div>
+</header>
+
+<div class="main">
+  <div class="card">
+
+    <!-- REGISTRATION FORM -->
+    <div id="regForm">
+      <div class="card-title">Create Your Account</div>
+      <div class="card-sub">Join PrePae and start saving toward your goals today</div>
+
+      <div class="info-box">
+        ✓ No credit check &nbsp;|&nbsp; ✓ No forced schedules &nbsp;|&nbsp; ✓ Pay when you have money
+      </div>
+
+      <div class="section-label">Personal Info</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" id="firstName" placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" id="lastName" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address *</label>
+        <input type="email" id="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="phone" placeholder="(662) 000-0000">
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Security</div>
+
+      <div class="form-group">
+        <label>Create Password *</label>
+        <input type="password" id="password" placeholder="Min 8 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password *</label>
+        <input type="password" id="confirmPass" placeholder="Re-enter password">
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Address</div>
+
+      <div class="form-group">
+        <label>Street Address</label>
+        <input type="text" id="address" placeholder="123 Main St">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="city" placeholder="Amory">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select id="state">
+            <option value="">Select</option>
+            <option>MS</option><option>AL</option><option>TN</option>
+            <option>AR</option><option>LA</option><option>GA</option>
+            <option>FL</option><option>TX</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" onclick="createAccount()">Create My Account</button>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div id="successScreen" class="success-screen">
+      <div class="check-circle">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M6 16 L13 23 L26 9" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 style="color:#fff;font-size:1.5rem;font-weight:800;margin-bottom:0.4rem;">Account Created!</h2>
+      <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:0.5rem;">Welcome to PrePae. Your account number is:</p>
+
+      <div class="acct-num-box">
+        <div class="acct-num-label">Your PrePae Account Number</div>
+        <div class="acct-num" id="accountNumber">#PP-000000</div>
+        <div style="font-size:0.75rem;color:#9ca3af;margin-top:0.5rem;">Save this number — you'll need it to log in</div>
+        <button class="acct-copy" onclick="copyAcct()">📋 Copy Account Number</button>
+      </div>
+
+      <p style="color:#9ca3af;font-size:0.85rem;">A confirmation has been sent to <strong id="confirmEmail" style="color:#fff;"></strong></p>
+
+      <a href="customer.html" class="portal-btn">Go to My Portal →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function generateAccountNumber() {
+  const prefix = 'PP';
+  const num = Math.floor(100000 + Math.random() * 900000);
+  return '#' + prefix + '-' + num;
+}
+
+function createAccount() {
+  const first = document.getElementById('firstName').value.trim();
+  const last = document.getElementById('lastName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const pass = document.getElementById('password').value;
+  const conf = document.getElementById('confirmPass').value;
+
+  if (!first || !last || !email || !phone) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+  if (pass.length < 8) {
+    alert('Password must be at least 8 characters.');
+    return;
+  }
+  if (pass !== conf) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  // Generate unique account number
+  const acctNum = generateAccountNumber();
+  document.getElementById('accountNumber').textContent = acctNum;
+  document.getElementById('confirmEmail').textContent = email;
+
+  // Show success
+  document.getElementById('regForm').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+}
+
+function copyAcct() {
+  const num = document.getElementById('accountNumber').textContent;
+  navigator.clipboard.writeText(num).then(() => {
+    const btn = document.querySelector('.acct-copy');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Account Number', 2000);
+  });
+}
+</script>
+</body>
+</html>
