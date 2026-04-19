@@ -59,5 +59,12 @@ body { font-family: 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; mi
 <script>
 fetch('https://prepae-backend.onrender.com').then(r=>r.json()).then(d=>{const s=document.getElementById('status');s.textContent=d.status+' v'+d.version;s.style.color='#10b981';}).catch(()=>{const s=document.getElementById('status');s.textContent='Offline';s.style.color='#ef4444';});
 </script>
+<div style="text-align:center;padding:1rem 0 0.5rem;margin-top:1rem;">
+  <a href="admin.html" style="font-size:0.6rem;color:#333;text-decoration:none;letter-spacing:1px;opacity:0.4;" 
+     onmouseover="this.style.opacity='1';this.style.color='#3b82f6'" 
+     onmouseout="this.style.opacity='0.4';this.style.color='#333'">
+    ⬡ ADMIN ACCESS
+  </a>
+</div>
 </body>
 </html>
