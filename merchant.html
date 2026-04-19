@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrePae - Merchant Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e7eb; }
+        .header { background: #1a1a1a; border-bottom: 1px solid #333; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav a { color: #9ca3af; text-decoration: none; font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .nav a:hover, .nav a.active { color: #3b82f6; }
+        .logout-btn { background: #333; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .logout-btn:hover { background: #444; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 1.5rem; }
+        .stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #fff; }
+        .stat-sub { font-size: 0.85rem; color: #3b82f6; margin-top: 0.25rem; }
+        .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+        .btn-primary { background: #3b82f6; color: #fff; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #2d2d2d; color: #e5e7eb; border: 1px solid #444; }
+        .btn-secondary:hover { background: #383838; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+        .btn-full { width: 100%; padding: 0.9rem; font-size: 1rem; }
+        h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #fff; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #fff; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: #9ca3af; border-bottom: 1px solid #333; }
+        td { padding: 0.85rem 1rem; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        tr:hover td { background: #1f1f1f; }
+        .badge { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-gray { background: #374151; color: #9ca3af; }
+        .progress-bar { background: #333; border-radius: 999px; height: 8px; overflow: hidden; margin: 0.5rem 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #6366f1); border-radius: 999px; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.4rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; background: #111; border: 1px solid #444; color: #e5e7eb; padding: 0.65rem 0.9rem; border-radius: 8px; font-size: 0.9rem; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 2rem; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-close { background: none; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer; }
+        .modal-close:hover { color: #fff; }
+        .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .tier-card { background: #111; border: 2px solid #333; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .tier-card:hover, .tier-card.current { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+        .tier-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .tier-price { font-size: 1.8rem; font-weight: 700; color: #3b82f6; }
+        .tier-price span { font-size: 0.85rem; color: #9ca3af; }
+        .tier-features { text-align: left; margin-top: 1rem; font-size: 0.82rem; color: #9ca3af; list-style: none; }
+        .tier-features li { margin-bottom: 0.4rem; }
+        .tier-features li::before { content: '✓ '; color: #3b82f6; font-weight: 700; }
+        .info-box { background: rgba(59,130,246,0.08); border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 0.9rem 1.2rem; margin-bottom: 1rem; font-size: 0.875rem; color: #93c5fd; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+        .product-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; overflow: hidden; }
+        .product-img { height: 140px; background: linear-gradient(135deg, #1e3a5f, #2d1b69); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .product-info { padding: 1rem; }
+        .product-name { font-weight: 600; margin-bottom: 0.3rem; }
+        .product-price { color: #3b82f6; font-weight: 700; font-size: 1.1rem; }
+        .product-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222; }
+        .toggle-switch { position: relative; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #444; border-radius: 999px; transition: 0.3s; }
+        .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        input:checked + .toggle-slider { background: #3b82f6; }
+        input:checked + .toggle-slider:before { transform: translateX(20px); }
+        .ticket { background: #111; border: 1px solid #333; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; }
+        .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .welcome-banner { background: linear-gradient(135deg, #1e3a5f 0%, #1e1b4b 100%); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .welcome-text h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .welcome-text p { color: #93c5fd; }
+        .free-badge { background: #3b82f6; color: #fff; padding: 0.5rem 1.2rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
+        .notif { display: inline-block; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; margin-left: 4px; vertical-align: middle; }
+        .ad-slot { background: #111; border: 2px solid #3b82f6; border-radius: 10px; padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
+        #toast { position:fixed;bottom:2rem;right:2rem;background:#3b82f6;color:#fff;padding:0.9rem 1.5rem;border-radius:10px;font-weight:600;z-index:9999;font-size:0.9rem;box-shadow:0 4px 20px rgba(59,130,246,0.4);transition:opacity 0.3s;opacity:0;pointer-events:none; }
+    </style>
+</head>
+<body>
+<div id="toast"></div>
+<header class="header">
+    <div class="header-content">
+        <a href="index.html" style="text-decoration:none;cursor:pointer;">
+            <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="20" width="15" height="3" rx="1.5" fill="#3b82f6" opacity="0.4"/>
+              <rect x="10" y="27" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
+              <rect x="10" y="34" width="30" height="3" rx="1.5" fill="url(#gG)"/>
+              <defs><linearGradient id="gG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#3b82f6"/><stop offset="100%" style="stop-color:#f59e0b"/></linearGradient></defs>
+              <circle cx="42" cy="35.5" r="4.5" fill="#f59e0b"/>
+              <path d="M 40.5 35.5 L 42 37 L 44 34" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="52" y="36" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">PrePae</text>
+              <text x="53" y="44" font-family="Inter, sans-serif" font-size="6" font-weight="500" fill="#3b82f6" letter-spacing="1">PREPARE. PAY. ACHIEVE.</text>
+            </svg>
+        </a>
+        <nav class="nav">
+            <a onclick="showPage('dashboard')" class="active" id="nav-dashboard">Dashboard</a>
+            <a onclick="showPage('products')" id="nav-products">Products</a>
+            <a onclick="showPage('orders')" id="nav-orders">Orders <span class="notif"></span></a>
+            <a onclick="showPage('advertising')" id="nav-advertising">Advertising</a>
+            <a onclick="showPage('settings')" id="nav-settings">Settings</a>
+            <a onclick="showPage('support')" id="nav-support">Support</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<!-- DASHBOARD -->
+<div class="container page active" id="page-dashboard">
+    <div class="welcome-banner">
+        <div class="welcome-text">
+            <h1>Welcome, Delta Furniture Co. 🏪</h1>
+            <p>Merchant ID: #MERCH-0042 &nbsp;|&nbsp; Member since Jan 2026</p>
+        </div>
+        <div class="free-badge">⭐ Year 1 FREE Advertising</div>
+    </div>
+    <div class="info-box">💡 Year 1 advertising is FREE. <a onclick="showPage('advertising')" style="color:#3b82f6;cursor:pointer;text-decoration:underline;">Set up your free ad slot now.</a></div>
+    <div class="card-grid">
+        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value">$0.00</div><div class="stat-sub">No sales yet</div></div>
+        <div class="stat-card"><div class="stat-label">Active Layaways</div><div class="stat-value">0</div><div class="stat-sub">Customers saving</div></div>
+        <div class="stat-card"><div class="stat-label">Products Listed</div><div class="stat-value" id="dash-prod-count">0</div><div class="stat-sub"><a onclick="showPage('products')" style="color:#3b82f6;cursor:pointer;">Add your first</a></div></div>
+        <div class="stat-card"><div class="stat-label">Completion Rate</div><div class="stat-value">—</div><div class="stat-sub">No data yet</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="card"><h3>Recent Orders</h3><p style="color:#9ca3af;font-size:0.9rem;">No orders yet. Add products to start receiving layaway orders.</p><br><button class="btn btn-primary btn-sm" onclick="showPage('products')">+ Add Products</button></div>
+        <div class="card"><h3>Quick Actions</h3>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <button class="btn btn-secondary" onclick="showPage('products')">📦 Add New Product</button>
+                <button class="btn btn-secondary" onclick="showPage('advertising')">📢 Set Up Free Ad</button>
+                <button class="btn btn-secondary" onclick="showPage('orders')">📋 View All Orders</button>
+                <button class="btn btn-secondary" onclick="showPage('settings')">⚙️ Store Settings</button>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="margin-top:1.5rem;"><h3>Plan — <span style="color:#3b82f6;">Free Tier</span></h3><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div><p style="font-size:0.85rem;color:#9ca3af;">0 / 10 products. <a onclick="openModal('upgradeModal')" style="color:#3b82f6;cursor:pointer;">Upgrade for unlimited.</a></p></div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="container page" id="page-products">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2>My Products</h2>
+        <button class="btn btn-primary" onclick="openModal('addProductModal')">+ Add Product</button>
+    </div>
+    <div class="info-box">📦 Products you list appear in the PrePae store and customers can start layaway goals for them.</div>
+    <div id="productGrid" class="product-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af;"><div style="font-size:3rem;margin-bottom:1rem;">📦</div><p>No products yet.</p><br><button class="btn btn-primary" onclick="openModal('addProductModal')">Add First Product</button></div>
+    </div>
+</div>
+
+<!-- ORDERS -->
+<div class="container page" id="page-orders">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2>Layaway Orders</h2>
+        <div style="display:flex;gap:0.75rem;">
+            <select onchange="filterOrders(this.value)" style="background:#1a1a1a;border:1px solid #444;color:#e5e7eb;padding:0.5rem 0.75rem;border-radius:8px;font-size:0.9rem;">
+                <option value="all">All Orders</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="exportOrders()">⬇ Export CSV</button>
+        </div>
+    </div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Total</th><th>Paid</th><th>Progress</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersTable"><tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:2rem;">No orders yet. Orders appear when customers start a layaway goal for your products.</td></tr></tbody></table></div></div>
+</div>
+
+<!-- ADVERTISING -->
+<div class="container page" id="page-advertising">
+    <h2>Advertising</h2>
+    <div class="info-box">⭐ <strong>Year 1 is FREE!</strong> You get 1 banner slot rotating every 15 minutes in the customer store.</div>
+    <div class="tier-grid">
+        <div class="tier-card current"><div class="tier-name">Free</div><div class="tier-price">$0<span>/mo</span></div><ul class="tier-features"><li>1 banner slot</li><li>15-min rotation</li><li>Basic analytics</li><li>Year 1 included</li></ul><div style="margin-top:1rem;"><span class="badge badge-blue">Current Plan</span></div></div>
+        <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Basic</div><div class="tier-price">$29<span>/mo</span></div><ul class="tier-features"><li>3 banner slots</li><li>5-min rotation</li><li>Full analytics</li><li>Priority placement</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
+        <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Pro</div><div class="tier-price">$79<span>/mo</span></div><ul class="tier-features"><li>Unlimited slots</li><li>Featured placement</li><li>Sponsored products</li><li>Custom campaigns</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
+    </div>
+    <div class="card">
+        <h3>Your Free Ad Slot</h3>
+        <div class="ad-slot"><div style="font-size:2rem;margin-bottom:0.5rem;">📢</div><p style="color:#3b82f6;font-weight:600;" id="adHeadlineDisplay">Delta Furniture Co.</p><p style="color:#9ca3af;font-size:0.85rem;" id="adTaglineDisplay">Rotating every 15 minutes in customer store</p><br><button class="btn btn-primary btn-sm" onclick="openModal('editAdModal')">Edit Ad Creative</button></div>
+        <h3 style="margin-top:1.5rem;">Performance</h3>
+        <div class="card-grid" style="margin-bottom:0;">
+            <div class="stat-card"><div class="stat-label">Impressions</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">This month</div></div>
+            <div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">0% CTR</div></div>
+            <div class="stat-card"><div class="stat-label">Conversions</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">Layaways started</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="container page" id="page-settings">
+    <h2>Store Settings</h2>
+    <div class="card">
+        <h3>Store Information</h3>
+        <div class="form-row">
+            <div class="form-group"><label>Store Name</label><input type="text" id="storeName" value="Delta Furniture Co."></div>
+            <div class="form-group"><label>Category</label><select id="storeCategory"><option>Furniture</option><option>Electronics</option><option>Clothing</option><option>Food</option><option>Auto Parts</option><option>Other</option></select></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Phone</label><input type="tel" id="storePhone" placeholder="(662) 555-0100"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="storeEmail" placeholder="store@example.com"></div>
+        </div>
+        <div class="form-group"><label>Address</label><input type="text" id="storeAddress" placeholder="123 Main St, Amory, MS 38821"></div>
+        <button class="btn btn-primary" onclick="saveStoreInfo()">Save Changes</button>
+    </div>
+    <div class="card">
+        <h3>Layaway Settings</h3>
+        <div class="toggle-row"><div><div style="font-weight:600;">Accept Layaway Orders</div><div style="font-size:0.82rem;color:#9ca3af;">Allow customers to create layaway goals</div></div><label class="toggle-switch"><input type="checkbox" id="acceptLayaway" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
+        <div class="toggle-row"><div><div style="font-weight:600;">Auto-Release on Completion</div><div style="font-size:0.82rem;color:#9ca3af;">Auto-release product when customer pays in full</div></div><label class="toggle-switch"><input type="checkbox" id="autoRelease" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
+        <div class="toggle-row"><div><div style="font-weight:600;">Email Notifications</div><div style="font-size:0.82rem;color:#9ca3af;">Get notified on each customer payment</div></div><label class="toggle-switch"><input type="checkbox" id="emailNotif" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
+        <div class="form-group" style="margin-top:1rem;"><label>Default Layaway Period (months)</label><select id="layawayPeriod"><option>3</option><option selected>6</option><option>12</option><option>18</option></select></div>
+        <button class="btn btn-primary" onclick="showToast('Layaway settings saved!')">Save Settings</button>
+    </div>
+    <div class="card">
+        <h3>Subscription Plan</h3>
+        <div class="tier-grid">
+            <div class="tier-card current"><div class="tier-name">Free</div><div class="tier-price">$0<span>/mo</span></div><ul class="tier-features"><li>Up to 10 products</li><li>Basic dashboard</li><li>1 free ad (Year 1)</li></ul><div style="margin-top:1rem;"><span class="badge badge-blue">Current</span></div></div>
+            <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Pro</div><div class="tier-price">$49<span>/mo</span></div><ul class="tier-features"><li>Unlimited products</li><li>Advanced analytics</li><li>Priority support</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- SUPPORT -->
+<div class="container page" id="page-support">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2>Support</h2>
+        <button class="btn btn-primary" onclick="openModal('newTicketModal')">+ New Ticket</button>
+    </div>
+    <div class="info-box">💬 Need help? Open a ticket or email <strong>support@prepae.com</strong></div>
+    <div class="card"><h3>My Tickets</h3><div id="ticketList"><p style="color:#9ca3af;text-align:center;padding:2rem;">No tickets yet.</p></div></div>
+    <div class="card"><h3>Quick Help</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <button class="btn btn-secondary" onclick="openFAQ('products')">📦 How to add products</button>
+            <button class="btn btn-secondary" onclick="openFAQ('orders')">📋 Managing orders</button>
+            <button class="btn btn-secondary" onclick="openFAQ('payments')">💳 Getting paid</button>
+            <button class="btn btn-secondary" onclick="openFAQ('advertising')">📢 Advertising guide</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="addProductModal">
+    <div class="modal">
+        <div class="modal-header"><h3>Add New Product</h3><button class="modal-close" onclick="closeModal('addProductModal')">×</button></div>
+        <div class="form-group"><label>Product Name</label><input type="text" id="prodName" placeholder="e.g. Premium Leather Sofa"></div>
+        <div class="form-row">
+            <div class="form-group"><label>Price ($)</label><input type="number" id="prodPrice" placeholder="0.00" step="0.01" min="0"></div>
+            <div class="form-group"><label>Category</label><select id="prodCategory"><option>Furniture</option><option>Electronics</option><option>Appliances</option><option>Clothing</option><option>Food</option><option>Auto Parts</option><option>Other</option></select></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="prodDesc" rows="3" placeholder="Describe your product..."></textarea></div>
+        <div class="form-row">
+            <div class="form-group"><label>Stock Qty</label><input type="number" id="prodStock" placeholder="1" min="1"></div>
+            <div class="form-group"><label>Emoji Icon</label><input type="text" id="prodEmoji" placeholder="🛋️" maxlength="2"></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary btn-full" onclick="addProduct()">Add Product</button>
+            <button class="btn btn-secondary btn-full" onclick="closeModal('addProductModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="editProductModal">
+    <div class="modal">
+        <div class="modal-header"><h3>Edit Product</h3><button class="modal-close" onclick="closeModal('editProductModal')">×</button></div>
+        <div class="form-group"><label>Product Name</label><input type="text" id="editProdName"></div>
+        <div class="form-row">
+            <div class="form-group"><label>Price ($)</label><input type="number" id="editProdPrice" step="0.01"></div>
+            <div class="form-group"><label>Stock</label><input type="number" id="editProdStock" min="0"></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="editProdDesc" rows="3"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-primary btn-full" onclick="saveProductEdit()">Save Changes</button>
+            <button class="btn btn-secondary btn-full" onclick="closeModal('editProductModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="editAdModal">
+    <div class="modal">
+        <div class="modal-header"><h3>Edit Ad Creative</h3><button class="modal-close" onclick="closeModal('editAdModal')">×</button></div>
+        <div class="form-group"><label>Headline</label><input type="text" id="adHeadlineInput" value="Delta Furniture Co."></div>
+        <div class="form-group"><label>Tagline</label><input type="text" id="adTaglineInput" placeholder="Quality furniture, no credit needed"></div>
+        <div class="modal-actions">
+            <button class="btn btn-primary btn-full" onclick="saveAd()">Save Ad</button>
+            <button class="btn btn-secondary btn-full" onclick="closeModal('editAdModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="upgradeModal">
+    <div class="modal">
+        <div class="modal-header"><h3>Upgrade Plan</h3><button class="modal-close" onclick="closeModal('upgradeModal')">×</button></div>
+        <div class="info-box">🚀 Pro gives you unlimited products, advanced analytics, and priority ad placement.</div>
+        <div style="text-align:center;padding:1rem;"><div style="font-size:2.5rem;font-weight:700;color:#3b82f6;">$49<span style="font-size:1rem;color:#9ca3af;">/month</span></div><p style="color:#9ca3af;margin-top:0.5rem;">Cancel anytime</p></div>
+        <div class="modal-actions">
+            <button class="btn btn-primary btn-full" onclick="closeModal('upgradeModal');showToast('Stripe payment coming soon!')">Upgrade Now</button>
+            <button class="btn btn-secondary btn-full" onclick="closeModal('upgradeModal')">Maybe Later</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="newTicketModal">
+    <div class="modal">
+        <div class="modal-header"><h3>New Support Ticket</h3><button class="modal-close" onclick="closeModal('newTicketModal')">×</button></div>
+        <div class="form-group"><label>Subject</label><input type="text" id="ticketSubject" placeholder="What do you need help with?"></div>
+        <div class="form-group"><label>Category</label><select id="ticketCategory"><option>Products</option><option>Orders</option><option>Payments</option><option>Advertising</option><option>Account</option><option>Other</option></select></div>
+        <div class="form-group"><label>Message</label><textarea id="ticketMessage" rows="4" placeholder="Describe your issue..."></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-primary btn-full" onclick="submitTicket()">Submit Ticket</button>
+            <button class="btn btn-secondary btn-full" onclick="closeModal('newTicketModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="faqModal">
+    <div class="modal">
+        <div class="modal-header"><h3 id="faqTitle">Help</h3><button class="modal-close" onclick="closeModal('faqModal')">×</button></div>
+        <div id="faqContent" style="color:#9ca3af;line-height:1.7;font-size:0.9rem;"></div>
+        <div class="modal-actions"><button class="btn btn-secondary btn-full" onclick="closeModal('faqModal')">Close</button></div>
+    </div>
+</div>
+
+<script>
+let products=[], tickets=[], editIdx=-1;
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');const n=document.getElementById('nav-'+p);if(n)n.classList.add('active');}
+function openModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
+function logout(){if(confirm('Log out?'))window.location.href='index.html';}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',3000);}
+function addProduct(){const name=document.getElementById('prodName').value.trim(),price=parseFloat(document.getElementById('prodPrice').value),cat=document.getElementById('prodCategory').value,desc=document.getElementById('prodDesc').value.trim(),stock=parseInt(document.getElementById('prodStock').value)||1,emoji=document.getElementById('prodEmoji').value.trim()||'📦';if(!name||!price||price<=0){alert('Enter a valid name and price.');return;}products.push({name,price,cat,desc,stock,emoji,id:Date.now()});renderProducts();closeModal('addProductModal');['prodName','prodPrice','prodDesc','prodStock','prodEmoji'].forEach(i=>document.getElementById(i).value='');showToast('Product added!');document.getElementById('dash-prod-count').textContent=products.length;}
+function renderProducts(){const g=document.getElementById('productGrid');if(!products.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af;"><div style="font-size:3rem;margin-bottom:1rem;">📦</div><p>No products yet.</p><br><button class="btn btn-primary" onclick="openModal('addProductModal')">Add First Product</button></div>';return;}g.innerHTML=products.map((p,i)=>'<div class="product-card"><div class="product-img">'+p.emoji+'</div><div class="product-info"><div class="product-name">'+p.name+'</div><div style="font-size:0.8rem;color:#9ca3af;">'+p.cat+' · Stock: '+p.stock+'</div><div class="product-price">$'+p.price.toFixed(2)+'</div><div style="font-size:0.8rem;color:#9ca3af;margin-top:0.3rem;">'+( p.desc||'No description')+'</div><div class="product-actions"><button class="btn btn-secondary btn-sm" onclick="editProduct('+i+')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteProduct('+i+')">Delete</button></div></div></div>').join('');}
+function editProduct(i){editIdx=i;const p=products[i];document.getElementById('editProdName').value=p.name;document.getElementById('editProdPrice').value=p.price;document.getElementById('editProdStock').value=p.stock;document.getElementById('editProdDesc').value=p.desc;openModal('editProductModal');}
+function saveProductEdit(){if(editIdx<0)return;products[editIdx].name=document.getElementById('editProdName').value.trim();products[editIdx].price=parseFloat(document.getElementById('editProdPrice').value);products[editIdx].stock=parseInt(document.getElementById('editProdStock').value);products[editIdx].desc=document.getElementById('editProdDesc').value.trim();renderProducts();closeModal('editProductModal');showToast('Product updated!');}
+function deleteProduct(i){if(confirm('Delete "'+products[i].name+'"?')){products.splice(i,1);renderProducts();document.getElementById('dash-prod-count').textContent=products.length;showToast('Product deleted.');}}
+function filterOrders(s){const rows=document.getElementById('ordersTable');rows.innerHTML='<tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:2rem;">No orders found.</td></tr>';}
+function exportOrders(){showToast('No orders to export yet.');}
+function saveAd(){const h=document.getElementById('adHeadlineInput').value.trim(),t=document.getElementById('adTaglineInput').value.trim();if(!h){alert('Enter a headline.');return;}document.getElementById('adHeadlineDisplay').textContent=h;if(t)document.getElementById('adTaglineDisplay').textContent=t;closeModal('editAdModal');showToast('Ad updated!');}
+function saveStoreInfo(){const n=document.getElementById('storeName').value.trim();if(!n){alert('Store name required.');return;}showToast('Store info saved!');}
+function submitTicket(){const s=document.getElementById('ticketSubject').value.trim(),m=document.getElementById('ticketMessage').value.trim(),c=document.getElementById('ticketCategory').value;if(!s||!m){alert('Fill in all fields.');return;}tickets.push({id:'TKT-'+String(tickets.length+1).padStart(3,'0'),subject:s,message:m,category:c,date:new Date().toLocaleDateString()});renderTickets();closeModal('newTicketModal');document.getElementById('ticketSubject').value='';document.getElementById('ticketMessage').value='';showToast('Ticket submitted! We respond within 24 hrs.');}
+function renderTickets(){const l=document.getElementById('ticketList');l.innerHTML=tickets.length?tickets.map(t=>'<div class="ticket"><div class="ticket-header"><strong>'+t.subject+'</strong><span class="badge badge-blue">open</span></div><div style="font-size:0.82rem;color:#9ca3af;">'+t.category+' · '+t.date+'</div><div style="margin-top:0.5rem;font-size:0.88rem;">'+t.message+'</div></div>').join(''):'<p style="color:#9ca3af;text-align:center;padding:2rem;">No tickets yet.</p>';}
+const faqData={products:{title:'How to Add Products',content:'<p><strong>1.</strong> Go to Products tab.</p><br><p><strong>2.</strong> Click "+ Add Product" and fill in name, price, category, stock.</p><br><p><strong>3.</strong> Add an emoji icon for the product thumbnail.</p><br><p><strong>4.</strong> Save — product is live in the PrePae store immediately.</p>'},orders:{title:'Managing Orders',content:'<p><strong>Active orders</strong> — customers currently saving for your product.</p><br><p><strong>Completed</strong> — customer paid in full, release the item.</p><br><p><strong>Export</strong> orders to CSV anytime for your records.</p>'},payments:{title:'Getting Paid',content:'<p>You get paid when a customer fully completes their layaway goal.</p><br><p>PrePae holds funds securely and transfers within 2 business days via Stripe.</p><br><p>Service fee: $1.50 per payment — charged to the customer, not you.</p>'},advertising:{title:'Advertising Guide',content:'<p><strong>Year 1 FREE</strong> — 1 banner slot rotating every 15 minutes.</p><br><p>Go to Advertising → "Edit Ad Creative" to set headline and tagline.</p><br><p>Upgrade: Basic $29/mo (3 slots), Pro $79/mo (unlimited).</p>'}};
+function openFAQ(t){const f=faqData[t];document.getElementById('faqTitle').textContent=f.title;document.getElementById('faqContent').innerHTML=f.content;openModal('faqModal');}
+</script>
+</body>
+</html>
