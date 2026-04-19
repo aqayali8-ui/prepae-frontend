@@ -59,12 +59,59 @@ body { font-family: 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; mi
 <script>
 fetch('https://prepae-backend.onrender.com').then(r=>r.json()).then(d=>{const s=document.getElementById('status');s.textContent=d.status+' v'+d.version;s.style.color='#10b981';}).catch(()=>{const s=document.getElementById('status');s.textContent='Offline';s.style.color='#ef4444';});
 </script>
-<div style="text-align:center;padding:1rem 0 0.5rem;margin-top:1rem;">
-  <a href="admin.html" style="font-size:0.6rem;color:#333;text-decoration:none;letter-spacing:1px;opacity:0.4;" 
-     onmouseover="this.style.opacity='1';this.style.color='#3b82f6'" 
-     onmouseout="this.style.opacity='0.4';this.style.color='#333'">
-    ⬡ ADMIN ACCESS
-  </a>
+
+<!-- ADMIN PASSWORD MODAL -->
+<div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#111827;border:1px solid #3b82f6;border-radius:14px;padding:2rem;width:340px;box-shadow:0 8px 32px rgba(59,130,246,0.3);">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">🔐</div>
+      <div style="font-size:1.1rem;font-weight:700;color:#fff;">Admin Access</div>
+      <div style="font-size:0.8rem;color:#9ca3af;margin-top:0.3rem;">Enter your admin password to continue</div>
+    </div>
+    <input type="password" id="adminPassInput" placeholder="Enter password"
+      style="width:100%;background:#0a0a0a;border:1px solid #3b82f6;border-radius:8px;color:#fff;padding:0.85rem 1rem;font-size:0.95rem;outline:none;margin-bottom:0.8rem;"
+      onkeydown="if(event.key==='Enter')checkAdminPass()">
+    <div id="adminError" style="color:#ef4444;font-size:0.8rem;margin-bottom:0.8rem;display:none;">❌ Incorrect password. Try again.</div>
+    <button onclick="checkAdminPass()" style="width:100%;background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:0.85rem;font-size:0.95rem;font-weight:700;cursor:pointer;margin-bottom:0.5rem;">Enter</button>
+    <button onclick="closeAdminModal()" style="width:100%;background:none;border:1px solid #374151;color:#9ca3af;border-radius:8px;padding:0.7rem;font-size:0.85rem;font-weight:600;cursor:pointer;">Cancel</button>
+  </div>
 </div>
+
+<!-- SMALL ADMIN LOCK ICON - bottom right corner -->
+<div style="position:fixed;bottom:1rem;right:1rem;z-index:100;">
+  <button onclick="openAdminModal()" title="Admin Login"
+    style="background:#1a1a1a;border:1px solid #374151;color:#4b5563;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;"
+    onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6'"
+    onmouseout="this.style.borderColor='#374151';this.style.color='#4b5563'">
+    🔒
+  </button>
+</div>
+
+<script>
+function openAdminModal() {
+  document.getElementById('adminModal').style.display = 'flex';
+  document.getElementById('adminPassInput').value = '';
+  document.getElementById('adminError').style.display = 'none';
+  setTimeout(() => document.getElementById('adminPassInput').focus(), 100);
+}
+function closeAdminModal() {
+  document.getElementById('adminModal').style.display = 'none';
+}
+function checkAdminPass() {
+  const pass = document.getElementById('adminPassInput').value;
+  // Admin password - change this to whatever you want
+  if (pass === 'PrepaeAdmin2026!') {
+    window.location.href = 'admin.html';
+  } else {
+    document.getElementById('adminError').style.display = 'block';
+    document.getElementById('adminPassInput').value = '';
+    document.getElementById('adminPassInput').focus();
+  }
+}
+// Close modal if clicking outside
+document.getElementById('adminModal').addEventListener('click', function(e) {
+  if(e.target === this) closeAdminModal();
+});
+</script>
 </body>
 </html>
