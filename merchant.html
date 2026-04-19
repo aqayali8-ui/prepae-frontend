@@ -1,476 +1,1244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrePae - Merchant Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e7eb; }
-        .header { background: #1a1a1a; border-bottom: 1px solid #333; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
-        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .nav { display: flex; gap: 2rem; align-items: center; }
-        .nav a { color: #9ca3af; text-decoration: none; font-weight: 500; cursor: pointer; transition: color 0.3s; }
-        .nav a:hover, .nav a.active { color: #3b82f6; }
-        .logout-btn { background: #333; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-        .logout-btn:hover { background: #444; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 1.5rem; }
-        .stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: #fff; }
-        .stat-sub { font-size: 0.85rem; color: #3b82f6; margin-top: 0.25rem; }
-        .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
-        .btn-primary { background: #3b82f6; color: #fff; }
-        .btn-primary:hover { background: #2563eb; }
-        .btn-secondary { background: #2d2d2d; color: #e5e7eb; border: 1px solid #444; }
-        .btn-secondary:hover { background: #383838; }
-        .btn-danger { background: #ef4444; color: #fff; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-        .btn-full { width: 100%; padding: 0.9rem; font-size: 1rem; }
-        h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #fff; }
-        h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #fff; }
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: #9ca3af; border-bottom: 1px solid #333; }
-        td { padding: 0.85rem 1rem; border-bottom: 1px solid #222; font-size: 0.9rem; }
-        tr:hover td { background: #1f1f1f; }
-        .badge { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
-        .badge-blue { background: #dbeafe; color: #1d4ed8; }
-        .badge-red { background: #fee2e2; color: #991b1b; }
-        .badge-gray { background: #374151; color: #9ca3af; }
-        .progress-bar { background: #333; border-radius: 999px; height: 8px; overflow: hidden; margin: 0.5rem 0; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #6366f1); border-radius: 999px; }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.4rem; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; background: #111; border: 1px solid #444; color: #e5e7eb; padding: 0.65rem 0.9rem; border-radius: 8px; font-size: 0.9rem; font-family: inherit; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 2rem; width: 90%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-close { background: none; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer; }
-        .modal-close:hover { color: #fff; }
-        .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
-        .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .tier-card { background: #111; border: 2px solid #333; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .tier-card:hover, .tier-card.current { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
-        .tier-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .tier-price { font-size: 1.8rem; font-weight: 700; color: #3b82f6; }
-        .tier-price span { font-size: 0.85rem; color: #9ca3af; }
-        .tier-features { text-align: left; margin-top: 1rem; font-size: 0.82rem; color: #9ca3af; list-style: none; }
-        .tier-features li { margin-bottom: 0.4rem; }
-        .tier-features li::before { content: '✓ '; color: #3b82f6; font-weight: 700; }
-        .info-box { background: rgba(59,130,246,0.08); border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 0.9rem 1.2rem; margin-bottom: 1rem; font-size: 0.875rem; color: #93c5fd; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
-        .product-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; overflow: hidden; }
-        .product-img { height: 140px; background: linear-gradient(135deg, #1e3a5f, #2d1b69); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .product-info { padding: 1rem; }
-        .product-name { font-weight: 600; margin-bottom: 0.3rem; }
-        .product-price { color: #3b82f6; font-weight: 700; font-size: 1.1rem; }
-        .product-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222; }
-        .toggle-switch { position: relative; width: 44px; height: 24px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #444; border-radius: 999px; transition: 0.3s; }
-        .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-        input:checked + .toggle-slider { background: #3b82f6; }
-        input:checked + .toggle-slider:before { transform: translateX(20px); }
-        .ticket { background: #111; border: 1px solid #333; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; }
-        .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .welcome-banner { background: linear-gradient(135deg, #1e3a5f 0%, #1e1b4b 100%); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .welcome-text h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
-        .welcome-text p { color: #93c5fd; }
-        .free-badge { background: #3b82f6; color: #fff; padding: 0.5rem 1.2rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; }
-        .notif { display: inline-block; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; margin-left: 4px; vertical-align: middle; }
-        .ad-slot { background: #111; border: 2px solid #3b82f6; border-radius: 10px; padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
-        #toast { position:fixed;bottom:2rem;right:2rem;background:#3b82f6;color:#fff;padding:0.9rem 1.5rem;border-radius:10px;font-weight:600;z-index:9999;font-size:0.9rem;box-shadow:0 4px 20px rgba(59,130,246,0.4);transition:opacity 0.3s;opacity:0;pointer-events:none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrePae — Merchant Portal</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --bg2: #16161d;
+    --bg3: #1e1e28;
+    --border: #2a2a38;
+    --accent: #4f6ef7;
+    --accent2: #7c3aed;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #f1f1f5;
+    --muted: #8888a0;
+    --card: #1a1a24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .logo-text span:first-child {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span:last-child {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--text);
+    background: var(--bg3);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:hover { background: #3d5ce4; transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-outline:hover { background: var(--bg3); border-color: var(--accent); }
+
+  .btn-green { background: var(--green); }
+  .btn-green:hover { background: #16a34a; }
+
+  /* MAIN LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* SIDEBAR */
+  aside {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sidebar-section {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    padding: 12px 12px 6px;
+    font-weight: 600;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .sidebar-item:hover { color: var(--text); background: var(--bg3); }
+
+  .sidebar-item.active {
+    color: var(--text);
+    background: var(--bg3);
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+  }
+
+  .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* CONTENT */
+  main {
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  /* PAGE SECTIONS */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HEADER ROW */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .page-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .page-sub { color: var(--muted); font-size: 14px; }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-note {
+    font-size: 12px;
+    color: var(--green);
+  }
+
+  .stat-note.warn { color: var(--yellow); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .badge-active { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-pending { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .badge-completed { background: rgba(79,110,247,0.15); color: var(--accent); }
+  .badge-paused { background: rgba(239,68,68,0.15); color: var(--red); }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--bg3);
+    border-radius: 4px;
+    height: 6px;
+    width: 120px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+  }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  input, select, textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  select option { background: var(--bg2); }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  /* PRODUCT CARD */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .product-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .product-card:hover { border-color: var(--accent); }
+
+  .product-img {
+    height: 140px;
+    background: linear-gradient(135deg, #1e1e30, #2a2a3e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+
+  .product-info { padding: 14px; }
+  .product-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .product-price { color: var(--accent); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .product-meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+
+  /* PAYOUT CARD */
+  .payout-hero {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .payout-amount { font-size: 40px; font-weight: 800; color: var(--green); }
+  .payout-label { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
+
+  /* ALERT */
+  .alert {
+    background: rgba(79,110,247,0.1);
+    border: 1px solid rgba(79,110,247,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #a5b4fc;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    width: 520px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .modal-close:hover { color: var(--text); }
+
+  /* WELCOME / ONBOARD */
+  .onboard-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .onboard-step {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0 auto 12px;
+  }
+
+  .step-num.done { background: var(--green); }
+
+  .step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .step-desc { font-size: 12px; color: var(--muted); }
+
+  /* NOTIFICATION DOT */
+  .notif {
+    background: var(--red);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    margin-left: auto;
+  }
+
+  /* AVATAR */
+  .avatar {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .nav-user:hover { background: var(--bg3); }
+
+  .nav-user-info { line-height: 1.3; }
+  .nav-user-name { font-size: 13px; font-weight: 600; }
+  .nav-user-role { font-size: 11px; color: var(--muted); }
+</style>
 </head>
 <body>
-<div id="toast"></div>
-<header class="header">
-    <div class="header-content">
-        <a href="index.html" style="text-decoration:none;cursor:pointer;">
-            <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="20" width="15" height="3" rx="1.5" fill="#3b82f6" opacity="0.4"/>
-              <rect x="10" y="27" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
-              <rect x="10" y="34" width="30" height="3" rx="1.5" fill="url(#gG)"/>
-              <defs><linearGradient id="gG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#3b82f6"/><stop offset="100%" style="stop-color:#f59e0b"/></linearGradient></defs>
-              <circle cx="42" cy="35.5" r="4.5" fill="#f59e0b"/>
-              <path d="M 40.5 35.5 L 42 37 L 44 34" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="52" y="36" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">PrePae</text>
-              <text x="53" y="44" font-family="Inter, sans-serif" font-size="6" font-weight="500" fill="#3b82f6" letter-spacing="1">PREPARE. PAY. ACHIEVE.</text>
-            </svg>
-        </a>
-        <nav class="nav">
-            <a onclick="showPage('dashboard')" class="active" id="nav-dashboard">Dashboard</a>
-            <a onclick="showPage('products')" id="nav-products">Products</a>
-            <a onclick="showPage('orders')" id="nav-orders">Orders <span class="notif"></span></a>
-            <a onclick="showPage('advertising')" id="nav-advertising">Advertising</a>
-            <a onclick="showPage('settings')" id="nav-settings">Settings</a>
-            <a onclick="showPage('support')" id="nav-support">Support</a>
-        </nav>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-</header>
 
-<!-- DASHBOARD -->
-<div class="container page active" id="page-dashboard">
-    <div class="welcome-banner">
-        <div class="welcome-text">
-            <h1>Welcome, Delta Furniture Co. 🏪</h1>
-            <p>Merchant ID: #MERCH-0042 &nbsp;|&nbsp; Member since Jan 2026</p>
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="8" fill="#1a1a2e"/>
+      <path d="M8 18C8 12.477 12.477 8 18 8s10 4.477 10 10-4.477 10-10 10S8 23.523 8 18z" stroke="#4f6ef7" stroke-width="2"/>
+      <path d="M14 18h8M14 14h5M14 22h5" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="24" cy="14" r="2" fill="#4f6ef7"/>
+    </svg>
+    <div class="logo-text">
+      <span>PrePae</span>
+      <span>Prepare. Pay. Achieve.</span>
+    </div>
+  </a>
+
+  <div class="nav-links">
+    <a href="customer.html" class="nav-link">Customer View</a>
+    <a href="#" class="nav-link active">Merchant Portal</a>
+    <div class="nav-user">
+      <div class="avatar">SM</div>
+      <div class="nav-user-info">
+        <div class="nav-user-name">Sample Merchant</div>
+        <div class="nav-user-role">Business Account</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-section">Overview</div>
+    <button class="sidebar-item active" onclick="showPage('dashboard')">
+      <span class="sidebar-icon">📊</span> Dashboard
+    </button>
+
+    <div class="sidebar-section">Store</div>
+    <button class="sidebar-item" onclick="showPage('products')">
+      <span class="sidebar-icon">📦</span> Products
+    </button>
+    <button class="sidebar-item" onclick="showPage('layaways')">
+      <span class="sidebar-icon">🔒</span> Layaway Plans
+      <span class="notif">3</span>
+    </button>
+
+    <div class="sidebar-section">Finance</div>
+    <button class="sidebar-item" onclick="showPage('payouts')">
+      <span class="sidebar-icon">💰</span> Payouts
+    </button>
+    <button class="sidebar-item" onclick="showPage('transactions')">
+      <span class="sidebar-icon">📋</span> Transactions
+    </button>
+
+    <div class="sidebar-section">Account</div>
+    <button class="sidebar-item" onclick="showPage('settings')">
+      <span class="sidebar-icon">⚙️</span> Settings
+    </button>
+    <button class="sidebar-item" onclick="showPage('support')">
+      <span class="sidebar-icon">💬</span> Support
+    </button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Welcome back, Sample Merchant 👋</div>
+          <div class="page-sub">Here's your store performance overview</div>
         </div>
-        <div class="free-badge">⭐ Year 1 FREE Advertising</div>
+        <button class="btn" onclick="openModal('addProduct')">+ Add Product</button>
+      </div>
+
+      <div class="alert">
+        ℹ️ Your merchant account is in <strong>demo mode</strong>. Connect your bank account in Settings to start receiving payouts.
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Active Layaways</div>
+          <div class="stat-value">12</div>
+          <div class="stat-note">↑ 4 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Reserved</div>
+          <div class="stat-value">$3,240</div>
+          <div class="stat-note">↑ 18% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Payout</div>
+          <div class="stat-value">$890</div>
+          <div class="stat-note warn">⏳ Processing Friday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed Plans</div>
+          <div class="stat-value">7</div>
+          <div class="stat-note">↑ 2 this month</div>
+        </div>
+      </div>
+
+      <!-- Onboarding steps -->
+      <div class="card">
+        <div class="card-title">Getting Started</div>
+        <div class="onboard-steps">
+          <div class="onboard-step">
+            <div class="step-num done">✓</div>
+            <div class="step-title">Create Account</div>
+            <div class="step-desc">Business profile set up</div>
+          </div>
+          <div class="onboard-step">
+            <div class="step-num">2</div>
+            <div class="step-title">Add Products</div>
+            <div class="step-desc">List items customers can layaway</div>
+          </div>
+          <div class="onboard-step">
+            <div class="step-num">3</div>
+            <div class="step-title">Connect Bank</div>
+            <div class="step-desc">Set up payouts in Settings</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card">
+        <div class="card-title">
+          Recent Layaway Activity
+          <button class="btn btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('layaways')">View All</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Progress</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Marcus J.</td>
+              <td>Air Jordan 1 Retro High</td>
+              <td>$180</td>
+              <td>$120</td>
+              <td>
+                <div class="progress-wrap"><div class="progress-fill" style="width:67%"></div></div>
+              </td>
+              <td><span class="badge badge-active">Active</span></td>
+            </tr>
+            <tr>
+              <td>Tanya W.</td>
+              <td>55" Smart TV</td>
+              <td>$599</td>
+              <td>$200</td>
+              <td>
+                <div class="progress-wrap"><div class="progress-fill" style="width:33%"></div></div>
+              </td>
+              <td><span class="badge badge-active">Active</span></td>
+            </tr>
+            <tr>
+              <td>Devon K.</td>
+              <td>PlayStation 5 Bundle</td>
+              <td>$550</td>
+              <td>$550</td>
+              <td>
+                <div class="progress-wrap"><div class="progress-fill" style="width:100%"></div></div>
+              </td>
+              <td><span class="badge badge-completed">Completed</span></td>
+            </tr>
+            <tr>
+              <td>Shay M.</td>
+              <td>Laptop — Dell Inspiron</td>
+              <td>$749</td>
+              <td>$100</td>
+              <td>
+                <div class="progress-wrap"><div class="progress-fill" style="width:13%"></div></div>
+              </td>
+              <td><span class="badge badge-pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div class="info-box">💡 Year 1 advertising is FREE. <a onclick="showPage('advertising')" style="color:#3b82f6;cursor:pointer;text-decoration:underline;">Set up your free ad slot now.</a></div>
-    <div class="card-grid">
-        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value">$0.00</div><div class="stat-sub">No sales yet</div></div>
-        <div class="stat-card"><div class="stat-label">Active Layaways</div><div class="stat-value">0</div><div class="stat-sub">Customers saving</div></div>
-        <div class="stat-card"><div class="stat-label">Products Listed</div><div class="stat-value" id="dash-prod-count">0</div><div class="stat-sub"><a onclick="showPage('products')" style="color:#3b82f6;cursor:pointer;">Add your first</a></div></div>
-        <div class="stat-card"><div class="stat-label">Completion Rate</div><div class="stat-value">—</div><div class="stat-sub">No data yet</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
-        <div class="card"><h3>Recent Orders</h3><p style="color:#9ca3af;font-size:0.9rem;">No orders yet. Add products to start receiving layaway orders.</p><br><button class="btn btn-primary btn-sm" onclick="showPage('products')">+ Add Products</button></div>
-        <div class="card"><h3>Quick Actions</h3>
-            <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                <button class="btn btn-secondary" onclick="showPage('products')">📦 Add New Product</button>
-                <button class="btn btn-secondary" onclick="showPage('advertising')">📢 Set Up Free Ad</button>
-                <button class="btn btn-secondary" onclick="showPage('orders')">📋 View All Orders</button>
-                <button class="btn btn-secondary" onclick="showPage('settings')">⚙️ Store Settings</button>
+
+    <!-- PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Your Products</div>
+          <div class="page-sub">Manage items available for layaway</div>
+        </div>
+        <button class="btn" onclick="openModal('addProduct')">+ Add Product</button>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-img">👟</div>
+          <div class="product-info">
+            <div class="product-name">Air Jordan 1 Retro High</div>
+            <div class="product-price">$180.00</div>
+            <div class="product-meta">
+              <span>Min down: $36</span>
+              <span><span class="badge badge-active">Active</span></span>
             </div>
+          </div>
         </div>
+        <div class="product-card">
+          <div class="product-img">📺</div>
+          <div class="product-info">
+            <div class="product-name">55" Samsung Smart TV</div>
+            <div class="product-price">$599.00</div>
+            <div class="product-meta">
+              <span>Min down: $60</span>
+              <span><span class="badge badge-active">Active</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">🎮</div>
+          <div class="product-info">
+            <div class="product-name">PlayStation 5 Bundle</div>
+            <div class="product-price">$550.00</div>
+            <div class="product-meta">
+              <span>Min down: $55</span>
+              <span><span class="badge badge-completed">Sold Out</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">💻</div>
+          <div class="product-info">
+            <div class="product-name">Dell Inspiron Laptop</div>
+            <div class="product-price">$749.00</div>
+            <div class="product-meta">
+              <span>Min down: $75</span>
+              <span><span class="badge badge-active">Active</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">📱</div>
+          <div class="product-info">
+            <div class="product-name">iPhone 15 Pro 128GB</div>
+            <div class="product-price">$999.00</div>
+            <div class="product-meta">
+              <span>Min down: $100</span>
+              <span><span class="badge badge-pending">Draft</span></span>
+            </div>
+          </div>
+        </div>
+        <!-- Add product placeholder -->
+        <div class="product-card" style="border-style:dashed;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:200px;" onclick="openModal('addProduct')">
+          <div style="text-align:center;color:var(--muted)">
+            <div style="font-size:32px;margin-bottom:8px">+</div>
+            <div style="font-size:13px">Add New Product</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card" style="margin-top:1.5rem;"><h3>Plan — <span style="color:#3b82f6;">Free Tier</span></h3><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div><p style="font-size:0.85rem;color:#9ca3af;">0 / 10 products. <a onclick="openModal('upgradeModal')" style="color:#3b82f6;cursor:pointer;">Upgrade for unlimited.</a></p></div>
-</div>
 
-<!-- PRODUCTS -->
-<div class="container page" id="page-products">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2>My Products</h2>
-        <button class="btn btn-primary" onclick="openModal('addProductModal')">+ Add Product</button>
-    </div>
-    <div class="info-box">📦 Products you list appear in the PrePae store and customers can start layaway goals for them.</div>
-    <div id="productGrid" class="product-grid">
-        <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af;"><div style="font-size:3rem;margin-bottom:1rem;">📦</div><p>No products yet.</p><br><button class="btn btn-primary" onclick="openModal('addProductModal')">Add First Product</button></div>
-    </div>
-</div>
+    <!-- LAYAWAYS -->
+    <div class="page" id="page-layaways">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Layaway Plans</div>
+          <div class="page-sub">Track all customer payment plans</div>
+        </div>
+      </div>
 
-<!-- ORDERS -->
-<div class="container page" id="page-orders">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2>Layaway Orders</h2>
-        <div style="display:flex;gap:0.75rem;">
-            <select onchange="filterOrders(this.value)" style="background:#1a1a1a;border:1px solid #444;color:#e5e7eb;padding:0.5rem 0.75rem;border-radius:8px;font-size:0.9rem;">
-                <option value="all">All Orders</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+      <div class="card">
+        <div class="card-title">All Plans</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Plan ID</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Total</th>
+              <th>Collected</th>
+              <th>Remaining</th>
+              <th>Next Payment</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#PP-0012</td>
+              <td>Marcus J.</td>
+              <td>Air Jordan 1 Retro High</td>
+              <td>$180</td>
+              <td>$120</td>
+              <td>$60</td>
+              <td>Apr 28</td>
+              <td><span class="badge badge-active">Active</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#PP-0011</td>
+              <td>Tanya W.</td>
+              <td>55" Samsung Smart TV</td>
+              <td>$599</td>
+              <td>$200</td>
+              <td>$399</td>
+              <td>May 1</td>
+              <td><span class="badge badge-active">Active</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#PP-0010</td>
+              <td>Devon K.</td>
+              <td>PlayStation 5 Bundle</td>
+              <td>$550</td>
+              <td>$550</td>
+              <td>$0</td>
+              <td>—</td>
+              <td><span class="badge badge-completed">Completed</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#PP-0009</td>
+              <td>Shay M.</td>
+              <td>Dell Inspiron Laptop</td>
+              <td>$749</td>
+              <td>$100</td>
+              <td>$649</td>
+              <td>Apr 22</td>
+              <td><span class="badge badge-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#PP-0008</td>
+              <td>James T.</td>
+              <td>iPhone 15 Pro</td>
+              <td>$999</td>
+              <td>$300</td>
+              <td>$699</td>
+              <td>—</td>
+              <td><span class="badge badge-paused">Paused</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAYOUTS -->
+    <div class="page" id="page-payouts">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Payouts</div>
+          <div class="page-sub">Track your earnings and bank transfers</div>
+        </div>
+        <button class="btn btn-green">Request Payout</button>
+      </div>
+
+      <div class="payout-hero">
+        <div>
+          <div class="payout-label">Available for Payout</div>
+          <div class="payout-amount">$890.00</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:6px">Next automatic transfer: Friday, Apr 25</div>
+        </div>
+        <button class="btn btn-green" style="font-size:15px;padding:12px 24px">Withdraw Now</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value">$1,240</div>
+          <div class="stat-note">↑ 22% vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">All Time</div>
+          <div class="stat-value">$8,750</div>
+          <div class="stat-note">Since Jan 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value">$890</div>
+          <div class="stat-note warn">⏳ Processing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed Plans</div>
+          <div class="stat-value">7</div>
+          <div class="stat-note">All paid out</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Payout History</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Reference</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apr 18, 2026</td>
+              <td style="color:var(--green);font-weight:600">$350.00</td>
+              <td>Bank Transfer</td>
+              <td style="font-size:12px;color:var(--muted)">PAY-20260418</td>
+              <td><span class="badge badge-completed">Paid</span></td>
+            </tr>
+            <tr>
+              <td>Apr 11, 2026</td>
+              <td style="color:var(--green);font-weight:600">$275.00</td>
+              <td>Bank Transfer</td>
+              <td style="font-size:12px;color:var(--muted)">PAY-20260411</td>
+              <td><span class="badge badge-completed">Paid</span></td>
+            </tr>
+            <tr>
+              <td>Apr 4, 2026</td>
+              <td style="color:var(--green);font-weight:600">$615.00</td>
+              <td>Bank Transfer</td>
+              <td style="font-size:12px;color:var(--muted)">PAY-20260404</td>
+              <td><span class="badge badge-completed">Paid</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="page" id="page-transactions">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Transactions</div>
+          <div class="page-sub">All customer payments received</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Payment History</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Amount</th>
+              <th>Plan ID</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apr 19, 2026</td>
+              <td>Marcus J.</td>
+              <td>Air Jordan 1 Retro High</td>
+              <td style="color:var(--green);font-weight:600">+$60.00</td>
+              <td style="font-size:12px;color:var(--muted)">#PP-0012</td>
+              <td><span class="badge badge-active">Payment</span></td>
+            </tr>
+            <tr>
+              <td>Apr 17, 2026</td>
+              <td>Tanya W.</td>
+              <td>55" Samsung Smart TV</td>
+              <td style="color:var(--green);font-weight:600">+$100.00</td>
+              <td style="font-size:12px;color:var(--muted)">#PP-0011</td>
+              <td><span class="badge badge-active">Payment</span></td>
+            </tr>
+            <tr>
+              <td>Apr 15, 2026</td>
+              <td>Devon K.</td>
+              <td>PlayStation 5 Bundle</td>
+              <td style="color:var(--green);font-weight:600">+$150.00</td>
+              <td style="font-size:12px;color:var(--muted)">#PP-0010</td>
+              <td><span class="badge badge-completed">Final</span></td>
+            </tr>
+            <tr>
+              <td>Apr 10, 2026</td>
+              <td>Shay M.</td>
+              <td>Dell Inspiron Laptop</td>
+              <td style="color:var(--green);font-weight:600">+$100.00</td>
+              <td style="font-size:12px;color:var(--muted)">#PP-0009</td>
+              <td><span class="badge badge-active">Down Payment</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Account Settings</div>
+          <div class="page-sub">Manage your merchant profile and preferences</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Business Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Business Name</label>
+            <input type="text" placeholder="Your Business Name">
+          </div>
+          <div class="form-group">
+            <label>Business Type</label>
+            <select>
+              <option>Retail Store</option>
+              <option>Electronics</option>
+              <option>Clothing & Footwear</option>
+              <option>Furniture & Home</option>
+              <option>Jewelry</option>
+              <option>Other</option>
             </select>
-            <button class="btn btn-secondary btn-sm" onclick="exportOrders()">⬇ Export CSV</button>
+          </div>
+          <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" placeholder="business@email.com">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="(662) 000-0000">
+          </div>
+          <div class="form-group full">
+            <label>Business Address</label>
+            <input type="text" placeholder="123 Main St, Amory, MS 38821">
+          </div>
+          <div class="form-group full">
+            <label>Business Description</label>
+            <textarea placeholder="Tell customers about your store..."></textarea>
+          </div>
         </div>
+        <div class="form-actions">
+          <button class="btn">Save Changes</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Layaway Policy</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Minimum Down Payment (%)</label>
+            <input type="number" placeholder="20" min="10" max="50">
+          </div>
+          <div class="form-group">
+            <label>Maximum Plan Duration (weeks)</label>
+            <input type="number" placeholder="12" min="4" max="52">
+          </div>
+          <div class="form-group">
+            <label>Late Payment Fee ($)</label>
+            <input type="number" placeholder="5.00">
+          </div>
+          <div class="form-group">
+            <label>Cancellation Restocking Fee (%)</label>
+            <input type="number" placeholder="10">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn">Save Policy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Payout Settings</div>
+        <div class="alert">🏦 Connect your bank account to receive automatic weekly payouts.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Payout Schedule</label>
+            <select>
+              <option>Weekly (every Friday)</option>
+              <option>Bi-weekly</option>
+              <option>Monthly</option>
+              <option>Manual only</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Minimum Payout Amount</label>
+            <input type="number" placeholder="50.00">
+          </div>
+        </div>
+        <div class="form-actions" style="margin-top:16px">
+          <button class="btn btn-green">+ Connect Bank Account</button>
+        </div>
+      </div>
     </div>
-    <div class="card"><div class="table-wrap"><table><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Total</th><th>Paid</th><th>Progress</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersTable"><tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:2rem;">No orders yet. Orders appear when customers start a layaway goal for your products.</td></tr></tbody></table></div></div>
+
+    <!-- SUPPORT -->
+    <div class="page" id="page-support">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Support</div>
+          <div class="page-sub">Get help with your merchant account</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contact Support</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" placeholder="What do you need help with?">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select>
+              <option>Payout Issue</option>
+              <option>Customer Dispute</option>
+              <option>Product Listing</option>
+              <option>Account Access</option>
+              <option>Technical Problem</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Message</label>
+            <textarea placeholder="Describe your issue in detail..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn">Submit Ticket</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-<!-- ADVERTISING -->
-<div class="container page" id="page-advertising">
-    <h2>Advertising</h2>
-    <div class="info-box">⭐ <strong>Year 1 is FREE!</strong> You get 1 banner slot rotating every 15 minutes in the customer store.</div>
-    <div class="tier-grid">
-        <div class="tier-card current"><div class="tier-name">Free</div><div class="tier-price">$0<span>/mo</span></div><ul class="tier-features"><li>1 banner slot</li><li>15-min rotation</li><li>Basic analytics</li><li>Year 1 included</li></ul><div style="margin-top:1rem;"><span class="badge badge-blue">Current Plan</span></div></div>
-        <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Basic</div><div class="tier-price">$29<span>/mo</span></div><ul class="tier-features"><li>3 banner slots</li><li>5-min rotation</li><li>Full analytics</li><li>Priority placement</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
-        <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Pro</div><div class="tier-price">$79<span>/mo</span></div><ul class="tier-features"><li>Unlimited slots</li><li>Featured placement</li><li>Sponsored products</li><li>Custom campaigns</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
+<!-- ADD PRODUCT MODAL -->
+<div class="modal-overlay" id="modal-addProduct">
+  <div class="modal">
+    <div class="modal-title">
+      Add New Product
+      <button class="modal-close" onclick="closeModal('addProduct')">✕</button>
     </div>
-    <div class="card">
-        <h3>Your Free Ad Slot</h3>
-        <div class="ad-slot"><div style="font-size:2rem;margin-bottom:0.5rem;">📢</div><p style="color:#3b82f6;font-weight:600;" id="adHeadlineDisplay">Delta Furniture Co.</p><p style="color:#9ca3af;font-size:0.85rem;" id="adTaglineDisplay">Rotating every 15 minutes in customer store</p><br><button class="btn btn-primary btn-sm" onclick="openModal('editAdModal')">Edit Ad Creative</button></div>
-        <h3 style="margin-top:1.5rem;">Performance</h3>
-        <div class="card-grid" style="margin-bottom:0;">
-            <div class="stat-card"><div class="stat-label">Impressions</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">This month</div></div>
-            <div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">0% CTR</div></div>
-            <div class="stat-card"><div class="stat-label">Conversions</div><div class="stat-value" style="font-size:1.5rem;">0</div><div class="stat-sub">Layaways started</div></div>
-        </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Product Name</label>
+        <input type="text" placeholder="e.g. Air Jordan 1 Retro High OG">
+      </div>
+      <div class="form-group">
+        <label>Price ($)</label>
+        <input type="number" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select>
+          <option>Footwear</option>
+          <option>Electronics</option>
+          <option>Clothing</option>
+          <option>Furniture</option>
+          <option>Jewelry</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quantity Available</label>
+        <input type="number" placeholder="1">
+      </div>
+      <div class="form-group">
+        <label>Min Down Payment (%)</label>
+        <input type="number" placeholder="20">
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea placeholder="Product description..."></textarea>
+      </div>
     </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="container page" id="page-settings">
-    <h2>Store Settings</h2>
-    <div class="card">
-        <h3>Store Information</h3>
-        <div class="form-row">
-            <div class="form-group"><label>Store Name</label><input type="text" id="storeName" value="Delta Furniture Co."></div>
-            <div class="form-group"><label>Category</label><select id="storeCategory"><option>Furniture</option><option>Electronics</option><option>Clothing</option><option>Food</option><option>Auto Parts</option><option>Other</option></select></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>Phone</label><input type="tel" id="storePhone" placeholder="(662) 555-0100"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="storeEmail" placeholder="store@example.com"></div>
-        </div>
-        <div class="form-group"><label>Address</label><input type="text" id="storeAddress" placeholder="123 Main St, Amory, MS 38821"></div>
-        <button class="btn btn-primary" onclick="saveStoreInfo()">Save Changes</button>
+    <div class="form-actions" style="margin-top:16px">
+      <button class="btn">Add Product</button>
+      <button class="btn btn-outline" onclick="closeModal('addProduct')">Cancel</button>
     </div>
-    <div class="card">
-        <h3>Layaway Settings</h3>
-        <div class="toggle-row"><div><div style="font-weight:600;">Accept Layaway Orders</div><div style="font-size:0.82rem;color:#9ca3af;">Allow customers to create layaway goals</div></div><label class="toggle-switch"><input type="checkbox" id="acceptLayaway" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
-        <div class="toggle-row"><div><div style="font-weight:600;">Auto-Release on Completion</div><div style="font-size:0.82rem;color:#9ca3af;">Auto-release product when customer pays in full</div></div><label class="toggle-switch"><input type="checkbox" id="autoRelease" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
-        <div class="toggle-row"><div><div style="font-weight:600;">Email Notifications</div><div style="font-size:0.82rem;color:#9ca3af;">Get notified on each customer payment</div></div><label class="toggle-switch"><input type="checkbox" id="emailNotif" checked onchange="showToast('Setting saved!')"><span class="toggle-slider"></span></label></div>
-        <div class="form-group" style="margin-top:1rem;"><label>Default Layaway Period (months)</label><select id="layawayPeriod"><option>3</option><option selected>6</option><option>12</option><option>18</option></select></div>
-        <button class="btn btn-primary" onclick="showToast('Layaway settings saved!')">Save Settings</button>
-    </div>
-    <div class="card">
-        <h3>Subscription Plan</h3>
-        <div class="tier-grid">
-            <div class="tier-card current"><div class="tier-name">Free</div><div class="tier-price">$0<span>/mo</span></div><ul class="tier-features"><li>Up to 10 products</li><li>Basic dashboard</li><li>1 free ad (Year 1)</li></ul><div style="margin-top:1rem;"><span class="badge badge-blue">Current</span></div></div>
-            <div class="tier-card" onclick="openModal('upgradeModal')"><div class="tier-name">Pro</div><div class="tier-price">$49<span>/mo</span></div><ul class="tier-features"><li>Unlimited products</li><li>Advanced analytics</li><li>Priority support</li></ul><div style="margin-top:1rem;"><button class="btn btn-primary btn-sm">Upgrade</button></div></div>
-        </div>
-    </div>
-</div>
-
-<!-- SUPPORT -->
-<div class="container page" id="page-support">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2>Support</h2>
-        <button class="btn btn-primary" onclick="openModal('newTicketModal')">+ New Ticket</button>
-    </div>
-    <div class="info-box">💬 Need help? Open a ticket or email <strong>support@prepae.com</strong></div>
-    <div class="card"><h3>My Tickets</h3><div id="ticketList"><p style="color:#9ca3af;text-align:center;padding:2rem;">No tickets yet.</p></div></div>
-    <div class="card"><h3>Quick Help</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-            <button class="btn btn-secondary" onclick="openFAQ('products')">📦 How to add products</button>
-            <button class="btn btn-secondary" onclick="openFAQ('orders')">📋 Managing orders</button>
-            <button class="btn btn-secondary" onclick="openFAQ('payments')">💳 Getting paid</button>
-            <button class="btn btn-secondary" onclick="openFAQ('advertising')">📢 Advertising guide</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="addProductModal">
-    <div class="modal">
-        <div class="modal-header"><h3>Add New Product</h3><button class="modal-close" onclick="closeModal('addProductModal')">×</button></div>
-        <div class="form-group"><label>Product Name</label><input type="text" id="prodName" placeholder="e.g. Premium Leather Sofa"></div>
-        <div class="form-row">
-            <div class="form-group"><label>Price ($)</label><input type="number" id="prodPrice" placeholder="0.00" step="0.01" min="0"></div>
-            <div class="form-group"><label>Category</label><select id="prodCategory"><option>Furniture</option><option>Electronics</option><option>Appliances</option><option>Clothing</option><option>Food</option><option>Auto Parts</option><option>Other</option></select></div>
-        </div>
-        <div class="form-group"><label>Description</label><textarea id="prodDesc" rows="3" placeholder="Describe your product..."></textarea></div>
-        <div class="form-row">
-            <div class="form-group"><label>Stock Qty</label><input type="number" id="prodStock" placeholder="1" min="1"></div>
-            <div class="form-group"><label>Emoji Icon</label><input type="text" id="prodEmoji" placeholder="🛋️" maxlength="2"></div>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-primary btn-full" onclick="addProduct()">Add Product</button>
-            <button class="btn btn-secondary btn-full" onclick="closeModal('addProductModal')">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="editProductModal">
-    <div class="modal">
-        <div class="modal-header"><h3>Edit Product</h3><button class="modal-close" onclick="closeModal('editProductModal')">×</button></div>
-        <div class="form-group"><label>Product Name</label><input type="text" id="editProdName"></div>
-        <div class="form-row">
-            <div class="form-group"><label>Price ($)</label><input type="number" id="editProdPrice" step="0.01"></div>
-            <div class="form-group"><label>Stock</label><input type="number" id="editProdStock" min="0"></div>
-        </div>
-        <div class="form-group"><label>Description</label><textarea id="editProdDesc" rows="3"></textarea></div>
-        <div class="modal-actions">
-            <button class="btn btn-primary btn-full" onclick="saveProductEdit()">Save Changes</button>
-            <button class="btn btn-secondary btn-full" onclick="closeModal('editProductModal')">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="editAdModal">
-    <div class="modal">
-        <div class="modal-header"><h3>Edit Ad Creative</h3><button class="modal-close" onclick="closeModal('editAdModal')">×</button></div>
-        <div class="form-group"><label>Headline</label><input type="text" id="adHeadlineInput" value="Delta Furniture Co."></div>
-        <div class="form-group"><label>Tagline</label><input type="text" id="adTaglineInput" placeholder="Quality furniture, no credit needed"></div>
-        <div class="modal-actions">
-            <button class="btn btn-primary btn-full" onclick="saveAd()">Save Ad</button>
-            <button class="btn btn-secondary btn-full" onclick="closeModal('editAdModal')">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="upgradeModal">
-    <div class="modal">
-        <div class="modal-header"><h3>Upgrade Plan</h3><button class="modal-close" onclick="closeModal('upgradeModal')">×</button></div>
-        <div class="info-box">🚀 Pro gives you unlimited products, advanced analytics, and priority ad placement.</div>
-        <div style="text-align:center;padding:1rem;"><div style="font-size:2.5rem;font-weight:700;color:#3b82f6;">$49<span style="font-size:1rem;color:#9ca3af;">/month</span></div><p style="color:#9ca3af;margin-top:0.5rem;">Cancel anytime</p></div>
-        <div class="modal-actions">
-            <button class="btn btn-primary btn-full" onclick="closeModal('upgradeModal');showToast('Stripe payment coming soon!')">Upgrade Now</button>
-            <button class="btn btn-secondary btn-full" onclick="closeModal('upgradeModal')">Maybe Later</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="newTicketModal">
-    <div class="modal">
-        <div class="modal-header"><h3>New Support Ticket</h3><button class="modal-close" onclick="closeModal('newTicketModal')">×</button></div>
-        <div class="form-group"><label>Subject</label><input type="text" id="ticketSubject" placeholder="What do you need help with?"></div>
-        <div class="form-group"><label>Category</label><select id="ticketCategory"><option>Products</option><option>Orders</option><option>Payments</option><option>Advertising</option><option>Account</option><option>Other</option></select></div>
-        <div class="form-group"><label>Message</label><textarea id="ticketMessage" rows="4" placeholder="Describe your issue..."></textarea></div>
-        <div class="modal-actions">
-            <button class="btn btn-primary btn-full" onclick="submitTicket()">Submit Ticket</button>
-            <button class="btn btn-secondary btn-full" onclick="closeModal('newTicketModal')">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="faqModal">
-    <div class="modal">
-        <div class="modal-header"><h3 id="faqTitle">Help</h3><button class="modal-close" onclick="closeModal('faqModal')">×</button></div>
-        <div id="faqContent" style="color:#9ca3af;line-height:1.7;font-size:0.9rem;"></div>
-        <div class="modal-actions"><button class="btn btn-secondary btn-full" onclick="closeModal('faqModal')">Close</button></div>
-    </div>
+  </div>
 </div>
 
 <script>
-var products=[], tickets=[], editIdx=-1;
-function showPage(p){
-  document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active");});
-  document.querySelectorAll(".nav a").forEach(function(a){a.classList.remove("active");});
-  document.getElementById("page-"+p).classList.add("active");
-  var n=document.getElementById("nav-"+p); if(n) n.classList.add("active");
-}
-function openModal(id){document.getElementById(id).classList.add("active");}
-function closeModal(id){document.getElementById(id).classList.remove("active");}
-document.querySelectorAll(".modal-overlay").forEach(function(o){
-  o.addEventListener("click",function(e){if(e.target===this)closeModal(this.id);});
-});
-function logout(){if(confirm("Log out?"))window.location.href="index.html";}
-function showToast(msg){
-  var t=document.getElementById("toast");
-  t.textContent=msg; t.style.opacity="1";
-  clearTimeout(t._timer);
-  t._timer=setTimeout(function(){t.style.opacity="0";},3000);
-}
-function addProduct(){
-  var name=document.getElementById("prodName").value.trim();
-  var price=parseFloat(document.getElementById("prodPrice").value);
-  var cat=document.getElementById("prodCategory").value;
-  var desc=document.getElementById("prodDesc").value.trim();
-  var stock=parseInt(document.getElementById("prodStock").value)||1;
-  var emoji=document.getElementById("prodEmoji").value.trim()||"📦";
-  if(!name||!price||price<=0){alert("Please enter a valid product name and price.");return;}
-  products.push({name:name,price:price,cat:cat,desc:desc,stock:stock,emoji:emoji,id:Date.now()});
-  renderProducts();
-  closeModal("addProductModal");
-  document.getElementById("prodName").value="";
-  document.getElementById("prodPrice").value="";
-  document.getElementById("prodDesc").value="";
-  document.getElementById("prodStock").value="";
-  document.getElementById("prodEmoji").value="";
-  showToast("Product added!");
-  document.getElementById("dash-prod-count").textContent=products.length;
-}
-function renderProducts(){
-  var g=document.getElementById("productGrid");
-  if(!products.length){
-    g.innerHTML="<div style=\"grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af\"><div style=\"font-size:3rem;margin-bottom:1rem\">📦</div><p>No products yet.</p><br><button class=\"btn btn-primary\" onclick=\"openModal(&apos;addProductModal&apos;)\">Add First Product</button></div>";
-    return;
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    event.currentTarget.classList.add('active');
   }
-  var html="";
-  for(var i=0;i<products.length;i++){
-    var p=products[i];
-    html+="<div class=\"product-card\">";
-    html+="<div class=\"product-img\">"+p.emoji+"</div>";
-    html+="<div class=\"product-info\">";
-    html+="<div class=\"product-name\">"+p.name+"</div>";
-    html+="<div style=\"font-size:0.8rem;color:#9ca3af\">"+p.cat+" &middot; Stock: "+p.stock+"</div>";
-    html+="<div class=\"product-price\">$"+p.price.toFixed(2)+"</div>";
-    html+="<div style=\"font-size:0.8rem;color:#9ca3af;margin-top:0.3rem\">"+(p.desc||"No description")+"</div>";
-    html+="<div class=\"product-actions\">";
-    html+="<button class=\"btn btn-secondary btn-sm\" onclick=\"editProduct("+i+")\">Edit</button> ";
-    html+="<button class=\"btn btn-danger btn-sm\" onclick=\"deleteProduct("+i+")\">Delete</button>";
-    html+="</div></div></div>";
+
+  function openModal(id) {
+    document.getElementById('modal-' + id).classList.add('open');
   }
-  g.innerHTML=html;
-}
-function editProduct(i){
-  editIdx=i; var p=products[i];
-  document.getElementById("editProdName").value=p.name;
-  document.getElementById("editProdPrice").value=p.price;
-  document.getElementById("editProdStock").value=p.stock;
-  document.getElementById("editProdDesc").value=p.desc;
-  openModal("editProductModal");
-}
-function saveProductEdit(){
-  if(editIdx<0)return;
-  products[editIdx].name=document.getElementById("editProdName").value.trim();
-  products[editIdx].price=parseFloat(document.getElementById("editProdPrice").value);
-  products[editIdx].stock=parseInt(document.getElementById("editProdStock").value);
-  products[editIdx].desc=document.getElementById("editProdDesc").value.trim();
-  renderProducts(); closeModal("editProductModal"); showToast("Product updated!");
-}
-function deleteProduct(i){
-  if(confirm("Delete "+products[i].name+"?")){
-    products.splice(i,1); renderProducts();
-    document.getElementById("dash-prod-count").textContent=products.length;
-    showToast("Product deleted.");
+
+  function closeModal(id) {
+    document.getElementById('modal-' + id).classList.remove('open');
   }
-}
-function filterOrders(s){
-  var t=document.getElementById("ordersTable");
-  t.innerHTML="<tr><td colspan=\"8\" style=\"text-align:center;color:#9ca3af;padding:2rem\">No "+(s==="all"?"":s+" ")+"orders found.</td></tr>";
-}
-function exportOrders(){showToast("No orders to export yet.");}
-function saveAd(){
-  var h=document.getElementById("adHeadlineInput").value.trim();
-  var t=document.getElementById("adTaglineInput").value.trim();
-  if(!h){alert("Enter a headline.");return;}
-  document.getElementById("adHeadlineDisplay").textContent=h;
-  if(t)document.getElementById("adTaglineDisplay").textContent=t;
-  closeModal("editAdModal"); showToast("Ad updated!");
-}
-function saveStoreInfo(){
-  if(!document.getElementById("storeName").value.trim()){alert("Store name required.");return;}
-  showToast("Store info saved!");
-}
-function submitTicket(){
-  var s=document.getElementById("ticketSubject").value.trim();
-  var m=document.getElementById("ticketMessage").value.trim();
-  var c=document.getElementById("ticketCategory").value;
-  if(!s||!m){alert("Fill in all fields.");return;}
-  tickets.push({id:"TKT-"+String(tickets.length+1).padStart(3,"0"),subject:s,message:m,category:c,date:new Date().toLocaleDateString()});
-  renderTickets(); closeModal("newTicketModal");
-  document.getElementById("ticketSubject").value="";
-  document.getElementById("ticketMessage").value="";
-  showToast("Ticket submitted! We respond within 24 hours.");
-}
-function renderTickets(){
-  var l=document.getElementById("ticketList");
-  if(!tickets.length){l.innerHTML="<p style=\"color:#9ca3af;text-align:center;padding:2rem\">No tickets yet.</p>";return;}
-  var html="";
-  for(var i=0;i<tickets.length;i++){
-    var t=tickets[i];
-    html+="<div class=\"ticket\"><div class=\"ticket-header\"><strong>"+t.subject+"</strong><span class=\"badge badge-blue\">open</span></div>";
-    html+="<div style=\"font-size:0.82rem;color:#9ca3af\">"+t.category+" &middot; "+t.date+"</div>";
-    html+="<div style=\"margin-top:0.5rem;font-size:0.88rem\">"+t.message+"</div></div>";
-  }
-  l.innerHTML=html;
-}
-var faqData={
-  products:{title:"How to Add Products",content:"<p><strong>1.</strong> Go to the Products tab.</p><br><p><strong>2.</strong> Click + Add Product and fill in name, price, category, and stock.</p><br><p><strong>3.</strong> Add an emoji icon for the product thumbnail in the store.</p><br><p><strong>4.</strong> Click Add Product — it goes live in the PrePae store immediately.</p><br><p style=\"color:#3b82f6\">Free tier: up to 10 products. Upgrade to Pro for unlimited.</p>"},
-  orders:{title:"Managing Orders",content:"<p><strong>Active</strong> — customers currently saving for your product.</p><br><p><strong>Completed</strong> — customer paid in full, release the item.</p><br><p><strong>Cancelled</strong> — goal was cancelled before completion.</p><br><p>Use Export CSV to download records.</p>"},
-  payments:{title:"Getting Paid",content:"<p>You receive payment when a customer fully completes their layaway goal.</p><br><p>PrePae holds funds securely during the layaway period.</p><br><p>Payouts processed within 2 business days via Stripe.</p><br><p><strong>Service fee:</strong> $1.50 per payment — charged to the customer, not you.</p>"},
-  advertising:{title:"Advertising Guide",content:"<p><strong>Year 1 FREE</strong> — 1 banner slot rotating every 15 minutes.</p><br><p>Go to Advertising tab, then Edit Ad Creative to set headline and tagline.</p><br><p>Basic $29/mo — 3 slots, 5-min rotation.</p><p>Pro $79/mo — unlimited slots, featured placement.</p>"}
-};
-function openFAQ(topic){
-  var f=faqData[topic];
-  document.getElementById("faqTitle").textContent=f.title;
-  document.getElementById("faqContent").innerHTML=f.content;
-  openModal("faqModal");
-}
+
+  // Close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  });
 </script>
+
 </body>
 </html>
