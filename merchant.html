@@ -1,1244 +1,770 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrePae — Merchant Portal</title>
-<style>
-  :root {
-    --bg: #0f0f13;
-    --bg2: #16161d;
-    --bg3: #1e1e28;
-    --border: #2a2a38;
-    --accent: #4f6ef7;
-    --accent2: #7c3aed;
-    --green: #22c55e;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --text: #f1f1f5;
-    --muted: #8888a0;
-    --card: #1a1a24;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-  }
-
-  /* NAV */
-  nav {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    height: 64px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .logo-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-  }
-
-  .logo-text span:first-child {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
-
-  .logo-text span:last-child {
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .nav-link {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    padding: 6px 14px;
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-
-  .nav-link:hover, .nav-link.active {
-    color: var(--text);
-    background: var(--bg3);
-  }
-
-  .btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 7px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn:hover { background: #3d5ce4; transform: translateY(-1px); }
-
-  .btn-outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-  }
-
-  .btn-outline:hover { background: var(--bg3); border-color: var(--accent); }
-
-  .btn-green { background: var(--green); }
-  .btn-green:hover { background: #16a34a; }
-
-  /* MAIN LAYOUT */
-  .layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: calc(100vh - 64px);
-  }
-
-  /* SIDEBAR */
-  aside {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    padding: 24px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .sidebar-section {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--muted);
-    padding: 12px 12px 6px;
-    font-weight: 600;
-  }
-
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 7px;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-  }
-
-  .sidebar-item:hover { color: var(--text); background: var(--bg3); }
-
-  .sidebar-item.active {
-    color: var(--text);
-    background: var(--bg3);
-    border-left: 2px solid var(--accent);
-    padding-left: 10px;
-  }
-
-  .sidebar-icon { font-size: 16px; width: 20px; text-align: center; }
-
-  /* CONTENT */
-  main {
-    padding: 32px;
-    overflow-y: auto;
-  }
-
-  /* PAGE SECTIONS */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* HEADER ROW */
-  .page-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-
-  .page-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-  .page-sub { color: var(--muted); font-size: 14px; }
-
-  /* STATS GRID */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .stat-value {
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-note {
-    font-size: 12px;
-    color: var(--green);
-  }
-
-  .stat-note.warn { color: var(--yellow); }
-
-  /* CARDS */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-  }
-
-  .card-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  /* TABLE */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  th {
-    text-align: left;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-    color: var(--muted);
-    font-weight: 600;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  td {
-    padding: 12px 12px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    vertical-align: middle;
-  }
-
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-
-  /* BADGE */
-  .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-
-  .badge-active { background: rgba(34,197,94,0.15); color: var(--green); }
-  .badge-pending { background: rgba(245,158,11,0.15); color: var(--yellow); }
-  .badge-completed { background: rgba(79,110,247,0.15); color: var(--accent); }
-  .badge-paused { background: rgba(239,68,68,0.15); color: var(--red); }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: var(--bg3);
-    border-radius: 4px;
-    height: 6px;
-    width: 120px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transition: width 0.4s ease;
-  }
-
-  /* FORM */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .form-group.full { grid-column: 1 / -1; }
-
-  label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-  }
-
-  input, select, textarea {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 10px 14px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: inherit;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-  }
-
-  select option { background: var(--bg2); }
-
-  textarea { resize: vertical; min-height: 80px; }
-
-  .form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-  }
-
-  /* PRODUCT CARD */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .product-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .product-card:hover { border-color: var(--accent); }
-
-  .product-img {
-    height: 140px;
-    background: linear-gradient(135deg, #1e1e30, #2a2a3e);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-  }
-
-  .product-info { padding: 14px; }
-  .product-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-  .product-price { color: var(--accent); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .product-meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
-
-  /* PAYOUT CARD */
-  .payout-hero {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .payout-amount { font-size: 40px; font-weight: 800; color: var(--green); }
-  .payout-label { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
-
-  /* ALERT */
-  .alert {
-    background: rgba(79,110,247,0.1);
-    border: 1px solid rgba(79,110,247,0.3);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #a5b4fc;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
-    width: 520px;
-    max-width: 95vw;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px;
-  }
-
-  .modal-close:hover { color: var(--text); }
-
-  /* WELCOME / ONBOARD */
-  .onboard-steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .onboard-step {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-  }
-
-  .step-num {
-    width: 32px;
-    height: 32px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-    margin: 0 auto 12px;
-  }
-
-  .step-num.done { background: var(--green); }
-
-  .step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .step-desc { font-size: 12px; color: var(--muted); }
-
-  /* NOTIFICATION DOT */
-  .notif {
-    background: var(--red);
-    color: #fff;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 1px 6px;
-    margin-left: auto;
-  }
-
-  /* AVATAR */
-  .avatar {
-    width: 34px;
-    height: 34px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-
-  .nav-user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
-  }
-
-  .nav-user:hover { background: var(--bg3); }
-
-  .nav-user-info { line-height: 1.3; }
-  .nav-user-name { font-size: 13px; font-weight: 600; }
-  .nav-user-role { font-size: 11px; color: var(--muted); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e7eb; }
+        .header { background: #1a1a1a; border-bottom: 1px solid #333; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav a { color: #9ca3af; text-decoration: none; font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .nav a:hover, .nav a.active { color: #3b82f6; }
+        .logout-btn { background: #333; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .logout-btn:hover { background: #444; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        h1 { font-size: 2rem; margin-bottom: 1.5rem; color: #fff; border-bottom: 3px solid #3b82f6; display: inline-block; padding-bottom: 0.5rem; }
+        .subtitle { color: #9ca3af; margin-bottom: 2rem; }
+        .btn { padding: 0.7rem 1.5rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.95rem; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+        .btn-secondary { background: #1f2937; color: #e5e7eb; }
+        .btn-secondary:hover { background: #374151; }
+        .btn-success { background: #3b82f6; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: #1a1a1a; padding: 1.5rem; border-radius: 8px; border: 1px solid #333; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .stat-card h3 { font-size: 0.85rem; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+        .stat-card .change { font-size: 0.85rem; color: #3b82f6; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0; }
+        .pricing-card { background: #1a1a1a; border: 3px solid #333; border-radius: 12px; padding: 2rem; text-align: center; position: relative; transition: all 0.3s; }
+        .pricing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .pricing-card.featured { border-color: #3b82f6; box-shadow: 0 4px 16px rgba(59,130,246,0.2); }
+        .pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 0.3rem 1rem; font-size: 0.75rem; font-weight: 700; border-radius: 4px; }
+        .pricing-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #fff; }
+        .pricing-card .price { font-size: 2.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem; }
+        .pricing-card .price span { font-size: 1.2rem; color: #9ca3af; }
+        .pricing-card ul { list-style: none; text-align: left; margin: 1.5rem 0; }
+        .pricing-card li { padding: 0.6rem 0; border-bottom: 1px solid #333; font-size: 0.95rem; color: #e5e7eb; }
+        .pricing-card li:last-child { border-bottom: none; }
+        .badge-free { display: inline-block; background: #3b82f6; color: white; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0; }
+        .badge-forever { background: #3b82f6; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #333; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.95rem; background: #0a0a0a; color: #fff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .form-hint { font-size: 0.85rem; color: #9ca3af; margin-top: 0.5rem; }
+        .info-box { background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; border-radius: 6px; padding: 1rem; margin: 1rem 0; color: #93c5fd; }
+        .success-box { background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; border-radius: 6px; padding: 1rem; margin: 1rem 0; color: #60a5fa; }
+        .table-container { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; overflow-x: auto; margin: 2rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #0a0a0a; padding: 1rem; text-align: left; font-weight: 600; border-bottom: 2px solid #333; color: #fff; }
+        .table td { padding: 1rem; border-bottom: 1px solid #333; color: #e5e7eb; }
+        .table tr:hover { background: #222; }
+        .payment-option { background: #0a0a0a; border: 3px solid #333; border-radius: 8px; padding: 1.2rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s; }
+        .payment-option:hover { border-color: #3b82f6; }
+        .payment-option.selected { border-color: #3b82f6; background: rgba(59,130,246,0.1); }
+        .toast { position: fixed; top: 2rem; right: 2rem; background: #3b82f6; color: white; padding: 1rem 1.5rem; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 2000; display: none; max-width: 400px; }
+        .toast.show { display: block; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform: translateX(400px); } to { transform: translateX(0); } }
+        .merchant-banner { background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(59,130,246,0.1) 100%); padding: 2rem; border-radius: 12px; border-left: 4px solid #3b82f6; margin-bottom: 2rem; }
+        .merchant-banner h2 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #fff; }
+        .merchant-banner p { color: #9ca3af; }
+        .image-upload-container { border: 2px dashed #333; border-radius: 8px; padding: 2rem; text-align: center; background: #0a0a0a; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem; }
+        .image-upload-container:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+        .image-upload-container.has-image { border-style: solid; border-color: #3b82f6; }
+        .image-preview { max-width: 100%; max-height: 200px; margin-top: 1rem; border-radius: 6px; }
+        .ad-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .stats-grid, .pricing-grid, .form-grid, .ad-tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a href="#" class="logo">
-    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="36" height="36" rx="8" fill="#1a1a2e"/>
-      <path d="M8 18C8 12.477 12.477 8 18 8s10 4.477 10 10-4.477 10-10 10S8 23.523 8 18z" stroke="#4f6ef7" stroke-width="2"/>
-      <path d="M14 18h8M14 14h5M14 22h5" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="24" cy="14" r="2" fill="#4f6ef7"/>
-    </svg>
-    <div class="logo-text">
-      <span>PrePae</span>
-      <span>Prepare. Pay. Achieve.</span>
-    </div>
-  </a>
-
-  <div class="nav-links">
-    <a href="customer.html" class="nav-link">Customer View</a>
-    <a href="#" class="nav-link active">Merchant Portal</a>
-    <div class="nav-user">
-      <div class="avatar">SM</div>
-      <div class="nav-user-info">
-        <div class="nav-user-name">Sample Merchant</div>
-        <div class="nav-user-role">Business Account</div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- LAYOUT -->
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside>
-    <div class="sidebar-section">Overview</div>
-    <button class="sidebar-item active" onclick="showPage('dashboard')">
-      <span class="sidebar-icon">📊</span> Dashboard
-    </button>
-
-    <div class="sidebar-section">Store</div>
-    <button class="sidebar-item" onclick="showPage('products')">
-      <span class="sidebar-icon">📦</span> Products
-    </button>
-    <button class="sidebar-item" onclick="showPage('layaways')">
-      <span class="sidebar-icon">🔒</span> Layaway Plans
-      <span class="notif">3</span>
-    </button>
-
-    <div class="sidebar-section">Finance</div>
-    <button class="sidebar-item" onclick="showPage('payouts')">
-      <span class="sidebar-icon">💰</span> Payouts
-    </button>
-    <button class="sidebar-item" onclick="showPage('transactions')">
-      <span class="sidebar-icon">📋</span> Transactions
-    </button>
-
-    <div class="sidebar-section">Account</div>
-    <button class="sidebar-item" onclick="showPage('settings')">
-      <span class="sidebar-icon">⚙️</span> Settings
-    </button>
-    <button class="sidebar-item" onclick="showPage('support')">
-      <span class="sidebar-icon">💬</span> Support
-    </button>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main>
-
-    <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Welcome back, Sample Merchant 👋</div>
-          <div class="page-sub">Here's your store performance overview</div>
+    <header class="header">
+        <div class="header-content">
+            <svg width="240" height="60" viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="20" width="15" height="3" rx="1.5" fill="#3b82f6" opacity="0.4"/>
+              <rect x="10" y="27" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
+              <rect x="10" y="34" width="30" height="3" rx="1.5" fill="url(#goldGrad2)"/>
+              <circle cx="42" cy="35.5" r="4.5" fill="#3b82f6"/>
+              <path d="M 40.5 35.5 L 42 37 L 44 34" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <text x="52" y="33" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="-0.5">PrePae</text>
+              <text x="120" y="33" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#9ca3af" letter-spacing="0.5">MERCHANT</text>
+              <text x="53" y="44" font-family="Inter, sans-serif" font-size="6" font-weight="500" fill="#3b82f6" letter-spacing="1">PREPARE. PAY. ACHIEVE.</text>
+            </svg>
+            <nav class="nav">
+                <a onclick="showPage('signup')" class="active">Signup</a>
+                <a onclick="showPage('dashboard')">Dashboard</a>
+                <a onclick="showPage('products')">Add Product</a>
+                <a onclick="showPage('advertising')">Advertising</a>
+                <a onclick="showPage('support')">Support</a>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </nav>
         </div>
-        <button class="btn" onclick="openModal('addProduct')">+ Add Product</button>
-      </div>
+    </header>
 
-      <div class="alert">
-        ℹ️ Your merchant account is in <strong>demo mode</strong>. Connect your bank account in Settings to start receiving payouts.
-      </div>
+    <div id="toast" class="toast"></div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Active Layaways</div>
-          <div class="stat-value">12</div>
-          <div class="stat-note">↑ 4 this week</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Reserved</div>
-          <div class="stat-value">$3,240</div>
-          <div class="stat-note">↑ 18% from last month</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Pending Payout</div>
-          <div class="stat-value">$890</div>
-          <div class="stat-note warn">⏳ Processing Friday</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Completed Plans</div>
-          <div class="stat-value">7</div>
-          <div class="stat-note">↑ 2 this month</div>
-        </div>
-      </div>
+    <!-- SIGNUP PAGE -->
+    <div id="signup" class="page active">
+        <div class="container">
+            <h1>Become a Merchant</h1>
+            <p class="subtitle">Join the platform and start accepting layaway payments today</p>
 
-      <!-- Onboarding steps -->
-      <div class="card">
-        <div class="card-title">Getting Started</div>
-        <div class="onboard-steps">
-          <div class="onboard-step">
-            <div class="step-num done">✓</div>
-            <div class="step-title">Create Account</div>
-            <div class="step-desc">Business profile set up</div>
-          </div>
-          <div class="onboard-step">
-            <div class="step-num">2</div>
-            <div class="step-title">Add Products</div>
-            <div class="step-desc">List items customers can layaway</div>
-          </div>
-          <div class="onboard-step">
-            <div class="step-num">3</div>
-            <div class="step-title">Connect Bank</div>
-            <div class="step-desc">Set up payouts in Settings</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent activity -->
-      <div class="card">
-        <div class="card-title">
-          Recent Layaway Activity
-          <button class="btn btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('layaways')">View All</button>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Total</th>
-              <th>Paid</th>
-              <th>Progress</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Marcus J.</td>
-              <td>Air Jordan 1 Retro High</td>
-              <td>$180</td>
-              <td>$120</td>
-              <td>
-                <div class="progress-wrap"><div class="progress-fill" style="width:67%"></div></div>
-              </td>
-              <td><span class="badge badge-active">Active</span></td>
-            </tr>
-            <tr>
-              <td>Tanya W.</td>
-              <td>55" Smart TV</td>
-              <td>$599</td>
-              <td>$200</td>
-              <td>
-                <div class="progress-wrap"><div class="progress-fill" style="width:33%"></div></div>
-              </td>
-              <td><span class="badge badge-active">Active</span></td>
-            </tr>
-            <tr>
-              <td>Devon K.</td>
-              <td>PlayStation 5 Bundle</td>
-              <td>$550</td>
-              <td>$550</td>
-              <td>
-                <div class="progress-wrap"><div class="progress-fill" style="width:100%"></div></div>
-              </td>
-              <td><span class="badge badge-completed">Completed</span></td>
-            </tr>
-            <tr>
-              <td>Shay M.</td>
-              <td>Laptop — Dell Inspiron</td>
-              <td>$749</td>
-              <td>$100</td>
-              <td>
-                <div class="progress-wrap"><div class="progress-fill" style="width:13%"></div></div>
-              </td>
-              <td><span class="badge badge-pending">Pending</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PRODUCTS -->
-    <div class="page" id="page-products">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Your Products</div>
-          <div class="page-sub">Manage items available for layaway</div>
-        </div>
-        <button class="btn" onclick="openModal('addProduct')">+ Add Product</button>
-      </div>
-
-      <div class="product-grid">
-        <div class="product-card">
-          <div class="product-img">👟</div>
-          <div class="product-info">
-            <div class="product-name">Air Jordan 1 Retro High</div>
-            <div class="product-price">$180.00</div>
-            <div class="product-meta">
-              <span>Min down: $36</span>
-              <span><span class="badge badge-active">Active</span></span>
+            <div class="info-box">
+                ✅ Accept layaway payments from customers<br>
+                ✅ Offer instant pickup orders<br>
+                ✅ Get paid when customers complete payment<br>
+                ✅ <strong>🎉 YEAR 1: FREE ADVERTISING (Save up to $1,188/year)</strong>
             </div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img">📺</div>
-          <div class="product-info">
-            <div class="product-name">55" Samsung Smart TV</div>
-            <div class="product-price">$599.00</div>
-            <div class="product-meta">
-              <span>Min down: $60</span>
-              <span><span class="badge badge-active">Active</span></span>
+
+            <h2 style="font-size: 1.6rem; margin: 2rem 0 1rem;">Choose Your Plan</h2>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$29<span>/mo</span></div>
+                    <div class="badge-free">+ FREE ADS YEAR 1</div>
+                    <ul>
+                        <li>✓ Up to 25 products</li>
+                        <li>✓ Unlimited layaway plans</li>
+                        <li>✓ Instant pickup orders</li>
+                        <li>✓ 2% transaction fee</li>
+                        <li>✓ Basic analytics</li>
+                        <li>✓ Email support</li>
+                        <li><strong style="color: #3b82f6;">✓ Year 1 Free Ads ($588 value)</strong></li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="selectPlan('Starter', 29)" style="width: 100%;">Select Starter</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <h3>Professional</h3>
+                    <div class="price">$79<span>/mo</span></div>
+                    <div class="badge-free">+ FREE ADS YEAR 1</div>
+                    <ul>
+                        <li>✓ Up to 100 products</li>
+                        <li>✓ Unlimited layaway plans</li>
+                        <li>✓ Instant pickup orders</li>
+                        <li>✓ 1.5% transaction fee</li>
+                        <li>✓ Advanced analytics</li>
+                        <li>✓ Priority support</li>
+                        <li>✓ Custom branding</li>
+                        <li><strong style="color: #3b82f6;">✓ Year 1 Free Ads ($1,188 value)</strong></li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="selectPlan('Professional', 79)" style="width: 100%;">Select Professional</button>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">$199<span>/mo</span></div>
+                    <div class="badge-free badge-forever">FREE ADS FOREVER</div>
+                    <ul>
+                        <li>✓ Unlimited products</li>
+                        <li>✓ Unlimited layaway plans</li>
+                        <li>✓ Instant pickup orders</li>
+                        <li>✓ 1% transaction fee</li>
+                        <li>✓ Premium analytics</li>
+                        <li>✓ 24/7 phone support</li>
+                        <li>✓ Multi-location support</li>
+                        <li>✓ API access</li>
+                        <li><strong style="color: #3b82f6;">✓ Advertising INCLUDED (forever)</strong></li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="selectPlan('Enterprise', 199)" style="width: 100%;">Select Enterprise</button>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img">🎮</div>
-          <div class="product-info">
-            <div class="product-name">PlayStation 5 Bundle</div>
-            <div class="product-price">$550.00</div>
-            <div class="product-meta">
-              <span>Min down: $55</span>
-              <span><span class="badge badge-completed">Sold Out</span></span>
+
+            <div id="applicationForm" style="display: none; margin-top: 3rem;">
+                <h2 style="font-size: 1.6rem; margin-bottom: 1rem;">Complete Your Application</h2>
+                
+                <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                    <div class="success-box">
+                        Selected Plan: <strong id="selectedPlan">-</strong> at <strong id="selectedPrice">$-</strong>/month<br>
+                        <span style="color: #3b82f6; font-weight: 600;">✓ Year 1 Free Advertising Included</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Business Name *</label>
+                            <input type="text" id="businessName" placeholder="Your business name">
+                        </div>
+                        <div class="form-group">
+                            <label>Owner Name *</label>
+                            <input type="text" id="ownerName" placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="businessEmail" placeholder="business@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="businessPhone" placeholder="(555) 555-5555">
+                        </div>
+                        <div class="form-group">
+                            <label>Business Category *</label>
+                            <select id="businessCategory">
+                                <option value="">Select category</option>
+                                <option>Furniture & Home</option>
+                                <option>Electronics</option>
+                                <option>Convenience Store</option>
+                                <option>Restaurant/Food</option>
+                                <option>Automotive</option>
+                                <option>Healthcare</option>
+                                <option>Services</option>
+                                <option>Indigenous/Tribal Business</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tax ID / EIN *</label>
+                            <input type="text" id="taxId" placeholder="XX-XXXXXXX">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Business Address *</label>
+                        <input type="text" id="address" placeholder="Street address">
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" id="city" placeholder="City">
+                        </div>
+                        <div class="form-group">
+                            <label>State *</label>
+                            <input type="text" id="state" placeholder="State">
+                        </div>
+                        <div class="form-group">
+                            <label>ZIP Code *</label>
+                            <input type="text" id="zip" placeholder="ZIP">
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 1.3rem; margin: 2rem 0 1rem; color: #f1f5f9;">Product Upload Service (Optional)</h3>
+                    
+                    <div class="form-group">
+                        <label>How many products do you need uploaded?</label>
+                        <select id="uploadTier" onchange="updateUploadOptions()">
+                            <option value="0">I'll upload my own products (FREE)</option>
+                            <option value="99">1-25 products - $99</option>
+                            <option value="249">26-100 products - $249</option>
+                            <option value="599">101-500 products - $599</option>
+                            <option value="999">500+ products - $999</option>
+                        </select>
+                    </div>
+
+                    <div id="uploadPaymentOptions" style="display: none;">
+                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Choose Payment Method:</h4>
+                        
+                        <div class="payment-option" onclick="selectUploadPayment('upfront')">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                                <div>
+                                    <strong>Pay Upfront - SAVE 10%</strong>
+                                    <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                        $<span id="upfrontPrice">224</span> one-time (save $<span id="upfrontSavings">25</span>)
+                                    </div>
+                                </div>
+                                <span style="background: #3b82f6; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">BEST VALUE</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-option" onclick="selectUploadPayment('split')">
+                            <div>
+                                <strong>Split Payment: 50% Now + Spread Remainder</strong>
+                                <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                    $<span id="splitUpfront">125</span> upfront + remainder over subscription
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <label style="font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Payoff duration:</label>
+                                    <select id="splitDuration" style="width: 100%; padding: 0.7rem; border: 1px solid #1f2937; border-radius: 6px;" onchange="updateSplitCalc()">
+                                        <option value="3">3 months (+$42/mo)</option>
+                                        <option value="6" selected>6 months (+$21/mo) - Recommended</option>
+                                        <option value="12">12 months (+$10/mo) - Easiest</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-option" onclick="selectUploadPayment('perproduct')">
+                            <div>
+                                <strong>Pay Per Product</strong>
+                                <div style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.3rem;">
+                                    $4.99 per product (no commitment, add more anytime)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="submitApplication()" style="width: 100%; margin-top: 2rem; font-size: 1.1rem; padding: 1rem;">Submit Application</button>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="product-card">
-          <div class="product-img">💻</div>
-          <div class="product-info">
-            <div class="product-name">Dell Inspiron Laptop</div>
-            <div class="product-price">$749.00</div>
-            <div class="product-meta">
-              <span>Min down: $75</span>
-              <span><span class="badge badge-active">Active</span></span>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard" class="page">
+        <div class="container">
+            <div class="merchant-banner">
+                <h2>Quick Stop Market</h2>
+                <p>Professional Plan • $79/month • Year 1 Free Advertising Active ✓</p>
             </div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img">📱</div>
-          <div class="product-info">
-            <div class="product-name">iPhone 15 Pro 128GB</div>
-            <div class="product-price">$999.00</div>
-            <div class="product-meta">
-              <span>Min down: $100</span>
-              <span><span class="badge badge-pending">Draft</span></span>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Monthly Revenue</h3>
+                    <div class="value">$12,450</div>
+                    <div class="change">↑ 15% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Layaways</h3>
+                    <div class="value">28</div>
+                    <div class="change">$8,920 in progress</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Instant Pickups Today</h3>
+                    <div class="value">43</div>
+                    <div class="change">$387 revenue</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Ad Performance</h3>
+                    <div class="value">1,247</div>
+                    <div class="change">Views this month (FREE)</div>
+                </div>
             </div>
-          </div>
+
+            <h2 style="font-size: 1.5rem; margin: 2rem 0 1rem;">Recent Instant Pickup Orders</h2>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTable">
+                        <tr>
+                            <td><strong>#1247</strong></td>
+                            <td>John Smith</td>
+                            <td>Pizza combo</td>
+                            <td style="color: #3b82f6; font-weight: 600;">$8.99</td>
+                            <td><span style="color: #3b82f6; font-weight: 600;">✓ Ready</span></td>
+                            <td>12 min ago</td>
+                            <td><button class="btn btn-secondary" onclick="completeOrder(this)">Complete</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#1246</strong></td>
+                            <td>Sarah Johnson</td>
+                            <td>Chips, 2x Drinks</td>
+                            <td style="color: #3b82f6; font-weight: 600;">$5.47</td>
+                            <td><span style="color: #3b82f6; font-weight: 600;">⏱ Preparing</span></td>
+                            <td>5 min ago</td>
+                            <td><button class="btn btn-primary" onclick="markReady(this)">Mark Ready</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="showPage('products')">+ Add Product</button>
+                <button class="btn btn-secondary" onclick="showPage('advertising')">Manage Advertising</button>
+                <button class="btn btn-secondary" onclick="showPage('support')">Contact Support</button>
+            </div>
         </div>
-        <!-- Add product placeholder -->
-        <div class="product-card" style="border-style:dashed;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:200px;" onclick="openModal('addProduct')">
-          <div style="text-align:center;color:var(--muted)">
-            <div style="font-size:32px;margin-bottom:8px">+</div>
-            <div style="font-size:13px">Add New Product</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- LAYAWAYS -->
-    <div class="page" id="page-layaways">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Layaway Plans</div>
-          <div class="page-sub">Track all customer payment plans</div>
-        </div>
-      </div>
+    <!-- ADD PRODUCT PAGE -->
+    <div id="products" class="page">
+        <div class="container">
+            <h1>Add Product</h1>
+            <p class="subtitle">Add products for layaway or instant pickup</p>
 
-      <div class="card">
-        <div class="card-title">All Plans</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Plan ID</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Total</th>
-              <th>Collected</th>
-              <th>Remaining</th>
-              <th>Next Payment</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="color:var(--muted);font-size:12px">#PP-0012</td>
-              <td>Marcus J.</td>
-              <td>Air Jordan 1 Retro High</td>
-              <td>$180</td>
-              <td>$120</td>
-              <td>$60</td>
-              <td>Apr 28</td>
-              <td><span class="badge badge-active">Active</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-size:12px">#PP-0011</td>
-              <td>Tanya W.</td>
-              <td>55" Samsung Smart TV</td>
-              <td>$599</td>
-              <td>$200</td>
-              <td>$399</td>
-              <td>May 1</td>
-              <td><span class="badge badge-active">Active</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-size:12px">#PP-0010</td>
-              <td>Devon K.</td>
-              <td>PlayStation 5 Bundle</td>
-              <td>$550</td>
-              <td>$550</td>
-              <td>$0</td>
-              <td>—</td>
-              <td><span class="badge badge-completed">Completed</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-size:12px">#PP-0009</td>
-              <td>Shay M.</td>
-              <td>Dell Inspiron Laptop</td>
-              <td>$749</td>
-              <td>$100</td>
-              <td>$649</td>
-              <td>Apr 22</td>
-              <td><span class="badge badge-pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td style="color:var(--muted);font-size:12px">#PP-0008</td>
-              <td>James T.</td>
-              <td>iPhone 15 Pro</td>
-              <td>$999</td>
-              <td>$300</td>
-              <td>$699</td>
-              <td>—</td>
-              <td><span class="badge badge-paused">Paused</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                
+                <div class="form-group">
+                    <label>Product Image *</label>
+                    <div class="image-upload-container" id="imageUploadContainer" onclick="document.getElementById('productImage').click()">
+                        <div id="uploadPrompt">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📸</div>
+                            <div style="font-weight: 600; margin-bottom: 0.3rem;">Click to upload product image</div>
+                            <div style="font-size: 0.9rem; color: #9ca3af;">JPG, PNG, or WEBP (max 5MB)</div>
+                        </div>
+                        <img id="imagePreview" class="image-preview" style="display: none;">
+                    </div>
+                    <input type="file" id="productImage" accept="image/*" style="display: none;" onchange="handleImageUpload(this)">
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input type="text" id="productName" placeholder="e.g., Pizza Slice">
+                    </div>
+                    <div class="form-group">
+                        <label>Price *</label>
+                        <input type="number" id="productPrice" placeholder="0.00" step="0.01" min="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Product Type *</label>
+                        <select id="productType">
+                            <option value="both">Both Layaway & Instant Pickup</option>
+                            <option value="layaway">Layaway Only</option>
+                            <option value="instant">Instant Pickup Only</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Layaway Deadline (if applicable)</label>
+                        <select id="layawayDeadline">
+                            <option value="3">3 months</option>
+                            <option value="6" selected>6 months</option>
+                            <option value="12">12 months</option>
+                            <option value="18">18 months</option>
+                            <option value="24">24 months</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Description</label>
+                    <textarea id="productDescription" rows="4" placeholder="Describe your product..."></textarea>
+                </div>
+
+                <div class="info-box">
+                    💡 <strong>Instant Pickup:</strong> Customer orders through app, must pick up same day. If they cancel, service fee applies.<br>
+                    💡 <strong>Layaway:</strong> Product ordered AFTER customer completes payment. No inventory hold needed during layaway period.
+                </div>
+
+                <button class="btn btn-primary" onclick="addProduct()" style="width: 100%; font-size: 1.1rem; padding: 1rem;">Add Product</button>
+            </div>
+        </div>
     </div>
 
-    <!-- PAYOUTS -->
-    <div class="page" id="page-payouts">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Payouts</div>
-          <div class="page-sub">Track your earnings and bank transfers</div>
-        </div>
-        <button class="btn btn-green">Request Payout</button>
-      </div>
+    <!-- ADVERTISING PAGE -->
+    <div id="advertising" class="page">
+        <div class="container">
+            <h1>Advertising Tools <span class="badge-free" style="margin-left: 1rem;">YEAR 1 FREE</span></h1>
+            <p class="subtitle">Promote your products and reach more customers</p>
 
-      <div class="payout-hero">
-        <div>
-          <div class="payout-label">Available for Payout</div>
-          <div class="payout-amount">$890.00</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:6px">Next automatic transfer: Friday, Apr 25</div>
-        </div>
-        <button class="btn btn-green" style="font-size:15px;padding:12px 24px">Withdraw Now</button>
-      </div>
+            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                
+                <div class="ad-tools-grid">
+                    <button class="btn btn-primary" onclick="runPromotion()">📢 Run Promotion</button>
+                    <button class="btn btn-success" onclick="emailCampaign()">📧 Email Campaign</button>
+                    <button class="btn btn-secondary" onclick="pushNotification()">🔔 Push Notification</button>
+                    <button class="btn btn-primary" style="background: #3b82f6;" onclick="promoteProduct()">⭐ Promote Product</button>
+                </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">This Month</div>
-          <div class="stat-value">$1,240</div>
-          <div class="stat-note">↑ 22% vs last month</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">All Time</div>
-          <div class="stat-value">$8,750</div>
-          <div class="stat-note">Since Jan 2026</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Pending</div>
-          <div class="stat-value">$890</div>
-          <div class="stat-note warn">⏳ Processing</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Completed Plans</div>
-          <div class="stat-value">7</div>
-          <div class="stat-note">All paid out</div>
-        </div>
-      </div>
+                <div class="success-box" style="margin-top: 2rem;">
+                    🎉 <strong>You're saving $99/month with Year 1 Free Advertising!</strong><br>
+                    These tools become $99/mo in Year 2 (or stay FREE with Enterprise plan).<br><br>
+                    Current usage: 1,247 ad views this month
+                </div>
 
-      <div class="card">
-        <div class="card-title">Payout History</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Reference</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Apr 18, 2026</td>
-              <td style="color:var(--green);font-weight:600">$350.00</td>
-              <td>Bank Transfer</td>
-              <td style="font-size:12px;color:var(--muted)">PAY-20260418</td>
-              <td><span class="badge badge-completed">Paid</span></td>
-            </tr>
-            <tr>
-              <td>Apr 11, 2026</td>
-              <td style="color:var(--green);font-weight:600">$275.00</td>
-              <td>Bank Transfer</td>
-              <td style="font-size:12px;color:var(--muted)">PAY-20260411</td>
-              <td><span class="badge badge-completed">Paid</span></td>
-            </tr>
-            <tr>
-              <td>Apr 4, 2026</td>
-              <td style="color:var(--green);font-weight:600">$615.00</td>
-              <td>Bank Transfer</td>
-              <td style="font-size:12px;color:var(--muted)">PAY-20260404</td>
-              <td><span class="badge badge-completed">Paid</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Advertising Performance</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Impressions</h3>
+                        <div class="value">1,247</div>
+                        <div class="change">This month</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Click-Through Rate</h3>
+                        <div class="value">3.2%</div>
+                        <div class="change">Above average</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Conversions</h3>
+                        <div class="value">42</div>
+                        <div class="change">From ads</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- TRANSACTIONS -->
-    <div class="page" id="page-transactions">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Transactions</div>
-          <div class="page-sub">All customer payments received</div>
-        </div>
-      </div>
+    <!-- SUPPORT PAGE -->
+    <div id="support" class="page">
+        <div class="container">
+            <h1>Contact Support</h1>
+            <p class="subtitle">Send a message to platform support</p>
 
-      <div class="card">
-        <div class="card-title">Payment History</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Amount</th>
-              <th>Plan ID</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Apr 19, 2026</td>
-              <td>Marcus J.</td>
-              <td>Air Jordan 1 Retro High</td>
-              <td style="color:var(--green);font-weight:600">+$60.00</td>
-              <td style="font-size:12px;color:var(--muted)">#PP-0012</td>
-              <td><span class="badge badge-active">Payment</span></td>
-            </tr>
-            <tr>
-              <td>Apr 17, 2026</td>
-              <td>Tanya W.</td>
-              <td>55" Samsung Smart TV</td>
-              <td style="color:var(--green);font-weight:600">+$100.00</td>
-              <td style="font-size:12px;color:var(--muted)">#PP-0011</td>
-              <td><span class="badge badge-active">Payment</span></td>
-            </tr>
-            <tr>
-              <td>Apr 15, 2026</td>
-              <td>Devon K.</td>
-              <td>PlayStation 5 Bundle</td>
-              <td style="color:var(--green);font-weight:600">+$150.00</td>
-              <td style="font-size:12px;color:var(--muted)">#PP-0010</td>
-              <td><span class="badge badge-completed">Final</span></td>
-            </tr>
-            <tr>
-              <td>Apr 10, 2026</td>
-              <td>Shay M.</td>
-              <td>Dell Inspiron Laptop</td>
-              <td style="color:var(--green);font-weight:600">+$100.00</td>
-              <td style="font-size:12px;color:var(--muted)">#PP-0009</td>
-              <td><span class="badge badge-active">Down Payment</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <div style="background: #111827; padding: 2rem; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 1px 3px rgba(0,0,0,0.5); max-width: 800px;">
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <input type="text" id="supportSubject" placeholder="Brief description of your issue">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="supportCategory">
+                        <option>General Question</option>
+                        <option>Technical Issue</option>
+                        <option>Billing Question</option>
+                        <option>Feature Request</option>
+                        <option>Account Problem</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Message *</label>
+                    <textarea id="supportMessage" rows="6" placeholder="Describe your issue in detail..."></textarea>
+                </div>
+
+                <div class="info-box">
+                    💡 We typically respond within 24 hours. For urgent issues, please call support at (555) 123-4567.
+                </div>
+
+                <button class="btn btn-primary" onclick="sendSupportMessage()" style="width: 100%; font-size: 1.1rem; padding: 1rem;">Send Message</button>
+            </div>
+
+            <h2 style="font-size: 1.5rem; margin: 3rem 0 1rem;">Your Support Tickets</h2>
+            <div class="table-container" style="max-width: 1000px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ticket #</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supportTickets">
+                        <tr>
+                            <td><strong>#842</strong></td>
+                            <td>Question about transaction fees</td>
+                            <td><span style="color: #3b82f6; font-weight: 600;">✓ Resolved</span></td>
+                            <td>Apr 7, 2026</td>
+                            <td><button class="btn btn-secondary" onclick="viewTicket(842)">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <!-- SETTINGS -->
-    <div class="page" id="page-settings">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Account Settings</div>
-          <div class="page-sub">Manage your merchant profile and preferences</div>
-        </div>
-      </div>
+    <script>
+        let selectedPlanData = {};
+        let selectedUploadPayment = 'upfront';
+        let uploadedImage = null;
 
-      <div class="card">
-        <div class="card-title">Business Information</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Business Name</label>
-            <input type="text" placeholder="Your Business Name">
-          </div>
-          <div class="form-group">
-            <label>Business Type</label>
-            <select>
-              <option>Retail Store</option>
-              <option>Electronics</option>
-              <option>Clothing & Footwear</option>
-              <option>Furniture & Home</option>
-              <option>Jewelry</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Contact Email</label>
-            <input type="email" placeholder="business@email.com">
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" placeholder="(662) 000-0000">
-          </div>
-          <div class="form-group full">
-            <label>Business Address</label>
-            <input type="text" placeholder="123 Main St, Amory, MS 38821">
-          </div>
-          <div class="form-group full">
-            <label>Business Description</label>
-            <textarea placeholder="Tell customers about your store..."></textarea>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn">Save Changes</button>
-        </div>
-      </div>
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
 
-      <div class="card">
-        <div class="card-title">Layaway Policy</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Minimum Down Payment (%)</label>
-            <input type="number" placeholder="20" min="10" max="50">
-          </div>
-          <div class="form-group">
-            <label>Maximum Plan Duration (weeks)</label>
-            <input type="number" placeholder="12" min="4" max="52">
-          </div>
-          <div class="form-group">
-            <label>Late Payment Fee ($)</label>
-            <input type="number" placeholder="5.00">
-          </div>
-          <div class="form-group">
-            <label>Cancellation Restocking Fee (%)</label>
-            <input type="number" placeholder="10">
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn">Save Policy</button>
-        </div>
-      </div>
+        // Toast notifications
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
 
-      <div class="card">
-        <div class="card-title">Payout Settings</div>
-        <div class="alert">🏦 Connect your bank account to receive automatic weekly payouts.</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Payout Schedule</label>
-            <select>
-              <option>Weekly (every Friday)</option>
-              <option>Bi-weekly</option>
-              <option>Monthly</option>
-              <option>Manual only</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Minimum Payout Amount</label>
-            <input type="number" placeholder="50.00">
-          </div>
-        </div>
-        <div class="form-actions" style="margin-top:16px">
-          <button class="btn btn-green">+ Connect Bank Account</button>
-        </div>
-      </div>
-    </div>
+        // Plan selection
+        function selectPlan(plan, price) {
+            selectedPlanData = { plan, price };
+            document.getElementById('selectedPlan').textContent = plan;
+            document.getElementById('selectedPrice').textContent = '$' + price;
+            document.getElementById('applicationForm').style.display = 'block';
+            document.getElementById('applicationForm').scrollIntoView({ behavior: 'smooth' });
+        }
 
-    <!-- SUPPORT -->
-    <div class="page" id="page-support">
-      <div class="page-header">
-        <div>
-          <div class="page-title">Support</div>
-          <div class="page-sub">Get help with your merchant account</div>
-        </div>
-      </div>
+        // Upload service options
+        function updateUploadOptions() {
+            const tier = parseInt(document.getElementById('uploadTier').value);
+            const container = document.getElementById('uploadPaymentOptions');
+            
+            if (tier === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            const discount = tier * 0.9;
+            const half = tier / 2;
+            
+            document.getElementById('upfrontPrice').textContent = discount.toFixed(0);
+            document.getElementById('upfrontSavings').textContent = (tier - discount).toFixed(0);
+            document.getElementById('splitUpfront').textContent = half.toFixed(2);
+            
+            updateSplitCalc();
+        }
 
-      <div class="card">
-        <div class="card-title">Contact Support</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Subject</label>
-            <input type="text" placeholder="What do you need help with?">
-          </div>
-          <div class="form-group">
-            <label>Category</label>
-            <select>
-              <option>Payout Issue</option>
-              <option>Customer Dispute</option>
-              <option>Product Listing</option>
-              <option>Account Access</option>
-              <option>Technical Problem</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group full">
-            <label>Message</label>
-            <textarea placeholder="Describe your issue in detail..."></textarea>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn">Submit Ticket</button>
-        </div>
-      </div>
-    </div>
+        function updateSplitCalc() {
+            const tier = parseInt(document.getElementById('uploadTier').value);
+            if (tier === 0) return;
+            
+            const duration = parseInt(document.getElementById('splitDuration').value);
+            const half = tier / 2;
+            
+            const options = document.getElementById('splitDuration').options;
+            options[0].text = `3 months (+$${(half/3).toFixed(2)}/mo)`;
+            options[1].text = `6 months (+$${(half/6).toFixed(2)}/mo) - Recommended`;
+            options[2].text = `12 months (+$${(half/12).toFixed(2)}/mo) - Easiest`;
+        }
 
-  </main>
-</div>
+        function selectUploadPayment(type) {
+            selectedUploadPayment = type;
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
 
-<!-- ADD PRODUCT MODAL -->
-<div class="modal-overlay" id="modal-addProduct">
-  <div class="modal">
-    <div class="modal-title">
-      Add New Product
-      <button class="modal-close" onclick="closeModal('addProduct')">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group full">
-        <label>Product Name</label>
-        <input type="text" placeholder="e.g. Air Jordan 1 Retro High OG">
-      </div>
-      <div class="form-group">
-        <label>Price ($)</label>
-        <input type="number" placeholder="0.00">
-      </div>
-      <div class="form-group">
-        <label>Category</label>
-        <select>
-          <option>Footwear</option>
-          <option>Electronics</option>
-          <option>Clothing</option>
-          <option>Furniture</option>
-          <option>Jewelry</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Quantity Available</label>
-        <input type="number" placeholder="1">
-      </div>
-      <div class="form-group">
-        <label>Min Down Payment (%)</label>
-        <input type="number" placeholder="20">
-      </div>
-      <div class="form-group full">
-        <label>Description</label>
-        <textarea placeholder="Product description..."></textarea>
-      </div>
-    </div>
-    <div class="form-actions" style="margin-top:16px">
-      <button class="btn">Add Product</button>
-      <button class="btn btn-outline" onclick="closeModal('addProduct')">Cancel</button>
-    </div>
-  </div>
-</div>
+        // Submit application
+        function submitApplication() {
+            const businessName = document.getElementById('businessName').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const email = document.getElementById('businessEmail').value;
+            
+            if (!businessName || !ownerName || !email) {
+                alert('Please fill in all required fields');
+                return;
+            }
 
-<script>
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  }
+            showToast('Application submitted! You will be notified within 24-48 hours. Year 1 free advertising will activate upon approval!');
+            setTimeout(() => showPage('dashboard'), 2000);
+        }
 
-  function openModal(id) {
-    document.getElementById('modal-' + id).classList.add('open');
-  }
+        // Image upload
+        function handleImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image must be less than 5MB');
+                    return;
+                }
 
-  function closeModal(id) {
-    document.getElementById('modal-' + id).classList.remove('open');
-  }
+                // Validate file type
+                if (!file.type.match('image.*')) {
+                    alert('Please upload an image file (JPG, PNG, or WEBP)');
+                    return;
+                }
 
-  // Close modal on overlay click
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
-    });
-  });
-</script>
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage = e.target.result;
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('uploadPrompt').style.display = 'none';
+                    document.getElementById('imageUploadContainer').classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
+        // Add product
+        function addProduct() {
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            
+            if (!uploadedImage) {
+                alert('Please upload a product image');
+                return;
+            }
+
+            if (!name || !price) {
+                alert('Please fill in product name and price');
+                return;
+            }
+
+            showToast('Product added successfully! It is now visible to customers.');
+            
+            // Reset form
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('uploadPrompt').style.display = 'block';
+            document.getElementById('imageUploadContainer').classList.remove('has-image');
+            uploadedImage = null;
+        }
+
+        // Dashboard functions
+        function completeOrder(btn) {
+            btn.closest('tr').remove();
+            showToast('Order marked as complete!');
+        }
+
+        function markReady(btn) {
+            const row = btn.closest('tr');
+            row.querySelector('td:nth-child(5)').innerHTML = '<span style="color: #3b82f6; font-weight: 600;">✓ Ready</span>';
+            btn.textContent = 'Complete';
+            btn.onclick = function() { completeOrder(this); };
+            showToast('Order marked as ready for pickup!');
+        }
+
+        // Advertising functions
+        function runPromotion() {
+            showToast('Creating promotion campaign...');
+        }
+
+        function emailCampaign() {
+            showToast('Starting email campaign...');
+        }
+
+        function pushNotification() {
+            showToast('Sending push notification...');
+        }
+
+        function promoteProduct() {
+            showToast('Promoting product on homepage...');
+        }
+
+        // Support functions
+        function sendSupportMessage() {
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+
+            if (!subject || !message) {
+                alert('Please fill in subject and message');
+                return;
+            }
+
+            showToast('Support ticket created! We will respond within 24 hours.');
+            
+            // Add to tickets table
+            const table = document.getElementById('supportTickets');
+            const newRow = table.insertRow(0);
+            newRow.innerHTML = `
+                <td><strong>#${Math.floor(Math.random() * 1000)}</strong></td>
+                <td>${subject}</td>
+                <td><span style="color: #3b82f6; font-weight: 600;">⏱ Pending</span></td>
+                <td>Just now</td>
+                <td><button class="btn btn-secondary" onclick="viewTicket(0)">View</button></td>
+            `;
+
+            // Reset form
+            document.getElementById('supportSubject').value = '';
+            document.getElementById('supportMessage').value = '';
+        }
+
+        function viewTicket(ticketId) {
+            showToast(`Opening ticket #${ticketId}...`);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'LANDING.html';
+            }
+        }
+    </script>
 </body>
 </html>
