@@ -335,173 +335,142 @@
 </div>
 
 <script>
-    var products = [];
-    var tickets = [];
-    var editIdx = -1;
-
-    function showPage(p) {
-        document.querySelectorAll('.page').forEach(function(x) { x.classList.remove('active'); });
-        document.querySelectorAll('.nav a').forEach(function(a) { a.classList.remove('active'); });
-        document.getElementById('page-' + p).classList.add('active');
-        var n = document.getElementById('nav-' + p);
-        if (n) n.classList.add('active');
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    document.querySelectorAll('.modal-overlay').forEach(function(o) {
-        o.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
-    });
-
-    function logout() {
-        if (confirm('Log out of your merchant account?')) window.location.href = 'index.html';
-    }
-
-    function showToast(msg) {
-        var t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.opacity = '1';
-        clearTimeout(t._timer);
-        t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
-    }
-
-    function addProduct() {
-        var name = document.getElementById('prodName').value.trim();
-        var price = parseFloat(document.getElementById('prodPrice').value);
-        var cat = document.getElementById('prodCategory').value;
-        var desc = document.getElementById('prodDesc').value.trim();
-        var stock = parseInt(document.getElementById('prodStock').value) || 1;
-        var emoji = document.getElementById('prodEmoji').value.trim() || '📦';
-        if (!name || !price || price <= 0) { alert('Please enter a valid product name and price.'); return; }
-        products.push({ name: name, price: price, cat: cat, desc: desc, stock: stock, emoji: emoji, id: Date.now() });
-        renderProducts();
-        closeModal('addProductModal');
-        document.getElementById('prodName').value = '';
-        document.getElementById('prodPrice').value = '';
-        document.getElementById('prodDesc').value = '';
-        document.getElementById('prodStock').value = '';
-        document.getElementById('prodEmoji').value = '';
-        showToast('Product added successfully!');
-        document.getElementById('dash-prod-count').textContent = products.length;
-    }
-
-    function renderProducts() {
-        var g = document.getElementById('productGrid');
-        if (!products.length) {
-            g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af"><div style="font-size:3rem;margin-bottom:1rem">📦</div><p>No products yet.</p><br><button class="btn btn-primary" onclick="openModal('addProductModal')">Add First Product</button></div>';
-            return;
-        }
-        var html = '';
-        for (var i = 0; i < products.length; i++) {
-            var p = products[i];
-            html += '<div class="product-card">';
-            html += '<div class="product-img">' + p.emoji + '</div>';
-            html += '<div class="product-info">';
-            html += '<div class="product-name">' + p.name + '</div>';
-            html += '<div style="font-size:0.8rem;color:#9ca3af">' + p.cat + ' · Stock: ' + p.stock + '</div>';
-            html += '<div class="product-price">$' + p.price.toFixed(2) + '</div>';
-            html += '<div style="font-size:0.8rem;color:#9ca3af;margin-top:0.3rem">' + (p.desc || 'No description') + '</div>';
-            html += '<div class="product-actions">';
-            html += '<button class="btn btn-secondary btn-sm" onclick="editProduct(' + i + ')">Edit</button>';
-            html += '<button class="btn btn-danger btn-sm" onclick="deleteProduct(' + i + ')">Delete</button>';
-            html += '</div></div></div>';
-        }
-        g.innerHTML = html;
-    }
-
-    function editProduct(i) {
-        editIdx = i;
-        var p = products[i];
-        document.getElementById('editProdName').value = p.name;
-        document.getElementById('editProdPrice').value = p.price;
-        document.getElementById('editProdStock').value = p.stock;
-        document.getElementById('editProdDesc').value = p.desc;
-        openModal('editProductModal');
-    }
-
-    function saveProductEdit() {
-        if (editIdx < 0) return;
-        products[editIdx].name = document.getElementById('editProdName').value.trim();
-        products[editIdx].price = parseFloat(document.getElementById('editProdPrice').value);
-        products[editIdx].stock = parseInt(document.getElementById('editProdStock').value);
-        products[editIdx].desc = document.getElementById('editProdDesc').value.trim();
-        renderProducts();
-        closeModal('editProductModal');
-        showToast('Product updated!');
-    }
-
-    function deleteProduct(i) {
-        if (confirm('Delete "' + products[i].name + '"? This cannot be undone.')) {
-            products.splice(i, 1);
-            renderProducts();
-            document.getElementById('dash-prod-count').textContent = products.length;
-            showToast('Product deleted.');
-        }
-    }
-
-    function filterOrders(status) {
-        var tbody = document.getElementById('ordersTable');
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:2rem">No ' + (status === 'all' ? '' : status + ' ') + 'orders found.</td></tr>';
-    }
-
-    function exportOrders() { showToast('No orders to export yet.'); }
-
-    function saveAd() {
-        var h = document.getElementById('adHeadlineInput').value.trim();
-        var t = document.getElementById('adTaglineInput').value.trim();
-        if (!h) { alert('Please enter an ad headline.'); return; }
-        document.getElementById('adHeadlineDisplay').textContent = h;
-        if (t) document.getElementById('adTaglineDisplay').textContent = t;
-        closeModal('editAdModal');
-        showToast('Ad updated successfully!');
-    }
-
-    function saveStoreInfo() {
-        var name = document.getElementById('storeName').value.trim();
-        if (!name) { alert('Store name cannot be empty.'); return; }
-        showToast('Store info saved!');
-    }
-
-    function submitTicket() {
-        var s = document.getElementById('ticketSubject').value.trim();
-        var m = document.getElementById('ticketMessage').value.trim();
-        var c = document.getElementById('ticketCategory').value;
-        if (!s || !m) { alert('Please fill in all fields.'); return; }
-        tickets.push({ id: 'TKT-' + String(tickets.length + 1).padStart(3, '0'), subject: s, message: m, category: c, date: new Date().toLocaleDateString() });
-        renderTickets();
-        closeModal('newTicketModal');
-        document.getElementById('ticketSubject').value = '';
-        document.getElementById('ticketMessage').value = '';
-        showToast('Ticket submitted! We respond within 24 hours.');
-    }
-
-    function renderTickets() {
-        var l = document.getElementById('ticketList');
-        if (!tickets.length) { l.innerHTML = '<p style="color:#9ca3af;text-align:center;padding:2rem">No tickets yet.</p>'; return; }
-        var html = '';
-        for (var i = 0; i < tickets.length; i++) {
-            var t = tickets[i];
-            html += '<div class="ticket"><div class="ticket-header"><strong>' + t.subject + '</strong><span class="badge badge-blue">open</span></div>';
-            html += '<div style="font-size:0.82rem;color:#9ca3af">' + t.category + ' · ' + t.date + '</div>';
-            html += '<div style="margin-top:0.5rem;font-size:0.88rem">' + t.message + '</div></div>';
-        }
-        l.innerHTML = html;
-    }
-
-    var faqData = {
-        products: { title: 'How to Add Products', content: '<p><strong>1.</strong> Go to the Products tab.</p><br><p><strong>2.</strong> Click "+ Add Product" and fill in name, price, category, and stock.</p><br><p><strong>3.</strong> Add an emoji icon for the product thumbnail in the store.</p><br><p><strong>4.</strong> Click Add Product — it goes live in the PrePae store immediately.</p><br><p style="color:#3b82f6">Free tier: up to 10 products. Upgrade to Pro for unlimited.</p>' },
-        orders: { title: 'Managing Orders', content: '<p><strong>Active</strong> — customers currently saving for your product.</p><br><p><strong>Completed</strong> — customer paid in full, time to release the item.</p><br><p><strong>Cancelled</strong> — goal was cancelled before completion.</p><br><p>Use the Export CSV button to download order records.</p>' },
-        payments: { title: 'Getting Paid', content: '<p>You receive payment when a customer fully completes their layaway goal.</p><br><p>PrePae holds funds securely during the layaway period.</p><br><p>Payouts are processed within 2 business days of completion via Stripe.</p><br><p><strong>Service fee:</strong> $1.50 per customer payment — charged to the customer, not you.</p>' },
-        advertising: { title: 'Advertising Guide', content: '<p><strong>Year 1 FREE</strong> — you get 1 banner slot rotating every 15 minutes in the customer store.</p><br><p>Go to Advertising tab, then click "Edit Ad Creative" to set your headline and tagline.</p><br><p><strong>Upgrade options:</strong></p><p>Basic $29/mo — 3 slots, 5-minute rotation</p><p>Pro $79/mo — unlimited slots, featured placement</p>' }
-    };
-
-    function openFAQ(topic) {
-        var f = faqData[topic];
-        document.getElementById('faqTitle').textContent = f.title;
-        document.getElementById('faqContent').innerHTML = f.content;
-        openModal('faqModal');
-    }
+var products=[], tickets=[], editIdx=-1;
+function showPage(p){
+  document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active");});
+  document.querySelectorAll(".nav a").forEach(function(a){a.classList.remove("active");});
+  document.getElementById("page-"+p).classList.add("active");
+  var n=document.getElementById("nav-"+p); if(n) n.classList.add("active");
+}
+function openModal(id){document.getElementById(id).classList.add("active");}
+function closeModal(id){document.getElementById(id).classList.remove("active");}
+document.querySelectorAll(".modal-overlay").forEach(function(o){
+  o.addEventListener("click",function(e){if(e.target===this)closeModal(this.id);});
+});
+function logout(){if(confirm("Log out?"))window.location.href="index.html";}
+function showToast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg; t.style.opacity="1";
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.style.opacity="0";},3000);
+}
+function addProduct(){
+  var name=document.getElementById("prodName").value.trim();
+  var price=parseFloat(document.getElementById("prodPrice").value);
+  var cat=document.getElementById("prodCategory").value;
+  var desc=document.getElementById("prodDesc").value.trim();
+  var stock=parseInt(document.getElementById("prodStock").value)||1;
+  var emoji=document.getElementById("prodEmoji").value.trim()||"📦";
+  if(!name||!price||price<=0){alert("Please enter a valid product name and price.");return;}
+  products.push({name:name,price:price,cat:cat,desc:desc,stock:stock,emoji:emoji,id:Date.now()});
+  renderProducts();
+  closeModal("addProductModal");
+  document.getElementById("prodName").value="";
+  document.getElementById("prodPrice").value="";
+  document.getElementById("prodDesc").value="";
+  document.getElementById("prodStock").value="";
+  document.getElementById("prodEmoji").value="";
+  showToast("Product added!");
+  document.getElementById("dash-prod-count").textContent=products.length;
+}
+function renderProducts(){
+  var g=document.getElementById("productGrid");
+  if(!products.length){
+    g.innerHTML="<div style=\"grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af\"><div style=\"font-size:3rem;margin-bottom:1rem\">📦</div><p>No products yet.</p><br><button class=\"btn btn-primary\" onclick=\"openModal(&apos;addProductModal&apos;)\">Add First Product</button></div>";
+    return;
+  }
+  var html="";
+  for(var i=0;i<products.length;i++){
+    var p=products[i];
+    html+="<div class=\"product-card\">";
+    html+="<div class=\"product-img\">"+p.emoji+"</div>";
+    html+="<div class=\"product-info\">";
+    html+="<div class=\"product-name\">"+p.name+"</div>";
+    html+="<div style=\"font-size:0.8rem;color:#9ca3af\">"+p.cat+" &middot; Stock: "+p.stock+"</div>";
+    html+="<div class=\"product-price\">$"+p.price.toFixed(2)+"</div>";
+    html+="<div style=\"font-size:0.8rem;color:#9ca3af;margin-top:0.3rem\">"+(p.desc||"No description")+"</div>";
+    html+="<div class=\"product-actions\">";
+    html+="<button class=\"btn btn-secondary btn-sm\" onclick=\"editProduct("+i+")\">Edit</button> ";
+    html+="<button class=\"btn btn-danger btn-sm\" onclick=\"deleteProduct("+i+")\">Delete</button>";
+    html+="</div></div></div>";
+  }
+  g.innerHTML=html;
+}
+function editProduct(i){
+  editIdx=i; var p=products[i];
+  document.getElementById("editProdName").value=p.name;
+  document.getElementById("editProdPrice").value=p.price;
+  document.getElementById("editProdStock").value=p.stock;
+  document.getElementById("editProdDesc").value=p.desc;
+  openModal("editProductModal");
+}
+function saveProductEdit(){
+  if(editIdx<0)return;
+  products[editIdx].name=document.getElementById("editProdName").value.trim();
+  products[editIdx].price=parseFloat(document.getElementById("editProdPrice").value);
+  products[editIdx].stock=parseInt(document.getElementById("editProdStock").value);
+  products[editIdx].desc=document.getElementById("editProdDesc").value.trim();
+  renderProducts(); closeModal("editProductModal"); showToast("Product updated!");
+}
+function deleteProduct(i){
+  if(confirm("Delete "+products[i].name+"?")){
+    products.splice(i,1); renderProducts();
+    document.getElementById("dash-prod-count").textContent=products.length;
+    showToast("Product deleted.");
+  }
+}
+function filterOrders(s){
+  var t=document.getElementById("ordersTable");
+  t.innerHTML="<tr><td colspan=\"8\" style=\"text-align:center;color:#9ca3af;padding:2rem\">No "+(s==="all"?"":s+" ")+"orders found.</td></tr>";
+}
+function exportOrders(){showToast("No orders to export yet.");}
+function saveAd(){
+  var h=document.getElementById("adHeadlineInput").value.trim();
+  var t=document.getElementById("adTaglineInput").value.trim();
+  if(!h){alert("Enter a headline.");return;}
+  document.getElementById("adHeadlineDisplay").textContent=h;
+  if(t)document.getElementById("adTaglineDisplay").textContent=t;
+  closeModal("editAdModal"); showToast("Ad updated!");
+}
+function saveStoreInfo(){
+  if(!document.getElementById("storeName").value.trim()){alert("Store name required.");return;}
+  showToast("Store info saved!");
+}
+function submitTicket(){
+  var s=document.getElementById("ticketSubject").value.trim();
+  var m=document.getElementById("ticketMessage").value.trim();
+  var c=document.getElementById("ticketCategory").value;
+  if(!s||!m){alert("Fill in all fields.");return;}
+  tickets.push({id:"TKT-"+String(tickets.length+1).padStart(3,"0"),subject:s,message:m,category:c,date:new Date().toLocaleDateString()});
+  renderTickets(); closeModal("newTicketModal");
+  document.getElementById("ticketSubject").value="";
+  document.getElementById("ticketMessage").value="";
+  showToast("Ticket submitted! We respond within 24 hours.");
+}
+function renderTickets(){
+  var l=document.getElementById("ticketList");
+  if(!tickets.length){l.innerHTML="<p style=\"color:#9ca3af;text-align:center;padding:2rem\">No tickets yet.</p>";return;}
+  var html="";
+  for(var i=0;i<tickets.length;i++){
+    var t=tickets[i];
+    html+="<div class=\"ticket\"><div class=\"ticket-header\"><strong>"+t.subject+"</strong><span class=\"badge badge-blue\">open</span></div>";
+    html+="<div style=\"font-size:0.82rem;color:#9ca3af\">"+t.category+" &middot; "+t.date+"</div>";
+    html+="<div style=\"margin-top:0.5rem;font-size:0.88rem\">"+t.message+"</div></div>";
+  }
+  l.innerHTML=html;
+}
+var faqData={
+  products:{title:"How to Add Products",content:"<p><strong>1.</strong> Go to the Products tab.</p><br><p><strong>2.</strong> Click + Add Product and fill in name, price, category, and stock.</p><br><p><strong>3.</strong> Add an emoji icon for the product thumbnail in the store.</p><br><p><strong>4.</strong> Click Add Product — it goes live in the PrePae store immediately.</p><br><p style=\"color:#3b82f6\">Free tier: up to 10 products. Upgrade to Pro for unlimited.</p>"},
+  orders:{title:"Managing Orders",content:"<p><strong>Active</strong> — customers currently saving for your product.</p><br><p><strong>Completed</strong> — customer paid in full, release the item.</p><br><p><strong>Cancelled</strong> — goal was cancelled before completion.</p><br><p>Use Export CSV to download records.</p>"},
+  payments:{title:"Getting Paid",content:"<p>You receive payment when a customer fully completes their layaway goal.</p><br><p>PrePae holds funds securely during the layaway period.</p><br><p>Payouts processed within 2 business days via Stripe.</p><br><p><strong>Service fee:</strong> $1.50 per payment — charged to the customer, not you.</p>"},
+  advertising:{title:"Advertising Guide",content:"<p><strong>Year 1 FREE</strong> — 1 banner slot rotating every 15 minutes.</p><br><p>Go to Advertising tab, then Edit Ad Creative to set headline and tagline.</p><br><p>Basic $29/mo — 3 slots, 5-min rotation.</p><p>Pro $79/mo — unlimited slots, featured placement.</p>"}
+};
+function openFAQ(topic){
+  var f=faqData[topic];
+  document.getElementById("faqTitle").textContent=f.title;
+  document.getElementById("faqContent").innerHTML=f.content;
+  openModal("faqModal");
+}
 </script>
 </body>
 </html>
